@@ -11,6 +11,8 @@ export class ProductEntity {
 
   @CreateDateColumn() createdDate: Date;
 
+  @Column('decimal') price: number;
+
   @Column('text') name: string;
 
   @Column('text') description: string;
