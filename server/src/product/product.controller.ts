@@ -1,4 +1,13 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ProductDTO } from './product.dto';
 import { ProductService } from './product.service';
 
 @Controller('product')
@@ -6,17 +15,27 @@ export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get()
-  getAllProduct() {}
+  getAllProduct() {
+    return this.productService.showAll();
+  }
 
   @Post()
-  createProduct() {}
+  createProduct(@Body() data: ProductDTO) {
+    return this.productService.create(data);
+  }
 
   @Get(':id')
-  getProduct() {}
+  getProduct(@Param('id') id: string) {
+    return this.productService.showOne(id);
+  }
 
-  @Put()
-  updateProduct() {}
+  @Put(':id')
+  updateProduct(@Param('id') id: string, @Body() data: Partial<ProductDTO>) {
+    return this.productService.update(id, data);
+  }
 
   @Delete(':id')
-  removeProduct() {}
+  removeProduct(@Param('id') id: string) {
+    return this.productService.delete(id);
+  }
 }

@@ -7,7 +7,7 @@ import {
 
 @Entity('product')
 export class ProductEntity {
-  @PrimaryGeneratedColumn('increment') id: number;
+  @PrimaryGeneratedColumn('uuid') id: string;
 
   @CreateDateColumn() createdDate: Date;
 
