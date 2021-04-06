@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 
-@Catch()
+@Catch(HttpException)
 export class HttpErrorFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -28,6 +28,6 @@ export class HttpErrorFilter implements ExceptionFilter {
       'Exception Filter',
     );
 
-    response.status(404).json(errorResponse);
+    response.status(status).json(errorResponse);
   }
 }
