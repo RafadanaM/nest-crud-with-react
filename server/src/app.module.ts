@@ -8,9 +8,15 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './helpers/http-error.filter';
 import { LoggingInterceptor } from './helpers/logging.interceptor';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config), ProductModule, UserModule],
+  imports: [
+    TypeOrmModule.forRoot(config),
+    ProductModule,
+    UserModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
