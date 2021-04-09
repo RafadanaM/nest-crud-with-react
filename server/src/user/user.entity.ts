@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -10,6 +11,8 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { UserResponseObject } from './user.dto';
 import { Role } from 'src/enums/role.enum';
+import { ProductEntity } from 'src/product/product.entity';
+import { type } from 'node:os';
 
 @Entity()
 export class UserEntity {
@@ -23,7 +26,10 @@ export class UserEntity {
 
   @Column({ length: 255 }) email: string;
 
-  @Column() roles: string;
+  @Column() roles: Role;
+
+  @OneToMany((type) => ProductEntity, (product) => product.creator)
+  products: ProductEntity[];
 
   //   @Column('date') birthDate: Date;
 
@@ -42,6 +48,9 @@ export class UserEntity {
     const responseObject: any = { id, created, username, roles };
     if (showToken) {
       // responseObject.token = token;
+    }
+    if (this.products) {
+      responseObject.products = this.products;
     }
     return responseObject;
   }

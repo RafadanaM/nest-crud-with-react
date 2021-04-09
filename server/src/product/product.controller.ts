@@ -10,9 +10,11 @@ import {
   Put,
   UseGuards,
   UsePipes,
+  Request,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/decorator/roles.decorator';
+import { User } from 'src/decorator/user.decorator';
 import { Role } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/helpers/roles.guard';
 import { ValidationPipe } from '../helpers/validation.pipe';
@@ -33,29 +35,34 @@ export class ProductController {
   @Roles(Role.User)
   @Post()
   @UsePipes(ValidationPipe)
-  createProduct(@Body() data: ProductDTO) {
-    return this.productService.create(data);
+  createProduct(@User('userId') userId: string, @Body() data: ProductDTO) {
+    return this.productService.create(userId, data);
   }
 
   @Get(':id')
   getProduct(@Param('id', ParseUUIDPipe) id: string) {
     return this.productService.showOne(id);
   }
+
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.User)
   @Put(':id')
   @UsePipes(ValidationPipe)
   updateProduct(
+    @User('userId') userId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: Partial<ProductDTO>,
   ) {
-    return this.productService.update(id, data);
+    return this.productService.update(userId, id, data);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.User)
   @Delete(':id')
-  removeProduct(@Param('id', ParseUUIDPipe) id: string) {
-    return this.productService.delete(id);
+  removeProduct(
+    @User('userId') userId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.productService.delete(userId, id);
   }
 }

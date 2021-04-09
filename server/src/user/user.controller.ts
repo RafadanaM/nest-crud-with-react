@@ -10,10 +10,11 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
 import { Roles } from 'src/decorator/roles.decorator';
+import { User } from 'src/decorator/user.decorator';
 import { Role } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/helpers/roles.guard';
 import { ValidationPipe } from 'src/helpers/validation.pipe';
-import { UserDto } from './user.dto';
+import { UserDto, UserResponseObject } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller()
@@ -32,9 +33,9 @@ export class UserController {
   @UseGuards(AuthGuard('local'))
   @Post('login')
   @UsePipes(ValidationPipe)
-  login(@Request() req: any) {
+  login(@User() user: UserResponseObject) {
     // return this.userService.login(data);
-    return this.authService.login(req.user);
+    return this.authService.login(user);
   }
 
   @Post('register')

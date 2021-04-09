@@ -14,8 +14,6 @@ import { plainToClass } from 'class-transformer';
 export class ValidationPipe implements PipeTransform<any> {
   private logger = new Logger('VAlidation Pipe');
   async transform(value: any, metadata: ArgumentMetadata) {
-    this.logger.log(value);
-    this.logger.log(metadata);
     if (value instanceof Object && this.isEmpty(value)) {
       throw new HttpException(
         'Validation Failed: No body submitted',
