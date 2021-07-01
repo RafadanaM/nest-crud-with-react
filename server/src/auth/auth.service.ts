@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserDto, UserResponseObject } from 'src/user/user.dto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -12,17 +12,18 @@ export class AuthService {
 
   async validateUser(
     username: string,
-    password: string,
+    pass: string,
   ): Promise<UserResponseObject> | null {
     const user = await this.userService.findOne(username);
-    if (user && (await user.comparePassword(password))) {
+    if (await user.comparePassword(pass)) {
       return user.toResponseObject();
     }
     return null;
   }
 
-  async login(user: UserResponseObject) {
+  generateJWTCookie(user: UserResponseObject): string {
     const payload = { username: user.username, id: user.id, roles: user.roles };
-    return { user: user, access_token: this.jwtService.sign(payload) };
+    const access_token = this.jwtService.sign(payload);
+    return access_token;
   }
 }

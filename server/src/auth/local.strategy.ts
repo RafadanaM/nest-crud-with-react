@@ -7,7 +7,7 @@ import { UserResponseObject } from 'src/user/user.dto';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super();
+    super({ usernameField: 'username' });
   }
 
   async validate(
@@ -16,7 +16,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   ): Promise<UserResponseObject> {
     const user = await this.authService.validateUser(username, password);
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid username/password');
     }
     return user;
   }

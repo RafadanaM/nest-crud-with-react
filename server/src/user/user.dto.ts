@@ -1,4 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
+import { ProductEntity } from 'src/product/product.entity';
+import { RoleEntity } from 'src/role/role.entity';
 
 export class UserDto {
   @IsNotEmpty()
@@ -15,6 +17,8 @@ export class UserResponseObject {
   id: string;
   username: string;
   created: Date;
-  roles: string;
+  roles: string[];
+  email: string;
   token?: string;
+  bookmarks?: ProductEntity[];
 }

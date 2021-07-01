@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
@@ -28,6 +33,8 @@ export class ProductService {
     const products = await this.productRepository.find({
       relations: ['creator'],
     });
+    console.log('Product ' + products);
+
     return products.map((product) => this.toResponseObject(product));
   }
 
@@ -56,6 +63,15 @@ export class ProductService {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
     return this.toResponseObject(product);
+  }
+
+  async showAllByUser(id: string): Promise<any> {
+    const products = await this.productRepository.find({
+      relations: ['creator'],
+      where: { creator: { id: id } },
+    });
+
+    return products.map((product) => this.toResponseObject(product));
   }
 
   async update(
@@ -91,5 +107,63 @@ export class ProductService {
     this.isOwned(product, userId);
     await this.productRepository.delete({ id });
     return product;
+  }
+
+  async bookmark(id: string, userId: string) {
+    let message = '';
+    let isAdd = true;
+    const product = await this.productRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['wishlist'],
+    });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (!product) {
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (
+      user.wishlist.filter(
+        (wishlistedProduct) => wishlistedProduct.id === product.id,
+      ).length < 1
+    ) {
+      user.wishlist.push(product);
+      await this.userRepository.save(user);
+      message = 'product added to wishlist';
+    } else {
+      user.wishlist = user.wishlist.filter(
+        (wishlistedProduct) => wishlistedProduct.id !== product.id,
+      );
+      await this.userRepository.save(user);
+      isAdd = false;
+      message = 'product removed from wishlist';
+      // throw new HttpException('Idea AlreadyBookmarked', HttpStatus.BAD_REQUEST);
+    }
+    return { isAdd: isAdd, message: message };
+  }
+
+  async unbookmark(id: string, userId: string) {
+    const product = await this.productRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['wishlist'],
+    });
+    if (
+      user.wishlist.filter(
+        (bookedmarkedProduct) => bookedmarkedProduct.id === product.id,
+      ).length > 0
+    ) {
+      user.wishlist = user.wishlist.filter(
+        (bookmarkedProduct) => bookmarkedProduct.id !== product.id,
+      );
+      await this.userRepository.save(user);
+    } else {
+      throw new HttpException('Idea AlreadyBookmarked', HttpStatus.BAD_REQUEST);
+    }
+    return user.toResponseObject();
   }
 }
