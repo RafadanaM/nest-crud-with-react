@@ -52,6 +52,12 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
   },
 
+  empty: {
+    marginTop: "20px",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
   buttonConfirm: {
     backgroundColor: theme.palette.success.main,
     "&:hover": {
@@ -148,13 +154,6 @@ const ManageOrder = () => {
   }, [filter, history]);
 
   return (
-    // <div className={css.baseContainer}>
-    //   <Grid item xs={12}>
-    //     <BackButton title="Profile" />
-    //   </Grid>
-
-    //   <SubMenu subMenu={subMenu} />
-    // </div>
     <div className={css.baseContainer}>
       <Grid item xs={12}>
         <BackButton title="Profile" />
@@ -165,7 +164,11 @@ const ManageOrder = () => {
         </Typography>
         {renderFilter()}
       </div>
-      {orderItems.length === 0 && <div>No Order</div>}
+      {orderItems.length === 0 && (
+        <Typography variant="h4" className={css.empty}>
+          Order is empty!
+        </Typography>
+      )}
       {orderItems.map((orderItem) => (
         <div className={css.card} key={orderItem.id}>
           <OrderItemCard orderItem={orderItem} />

@@ -2,7 +2,6 @@ import React from "react";
 import { Switch, BrowserRouter, Redirect, Route } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
 import Home from "../pages/Home/Home";
-import Login from "../pages/Login/Login";
 import NotFound from "../pages/NotFound/NotFound";
 import Order from "../pages/Order/Order";
 import ProductDetail from "../pages/ProductDetail/ProductDetail";
@@ -16,6 +15,8 @@ import "react-toastify/dist/ReactToastify.css";
 import OrderDetail from "../pages/OrderDetail/OrderDetail";
 //import UserProduct from "../pages/UserProduct/UserProduct";
 import ManageOrder from "../pages/ManageOrder/ManageOrder";
+import Cart from "../pages/Cart/Cart";
+import Authentication from "../pages/Authentication/Authentication";
 
 const Router = () => {
   return (
@@ -25,12 +26,13 @@ const Router = () => {
         <ToastContainer />
         <Switch>
           <PublicRoute exact path="/" component={Home} />
-          <PublicRoute path="/login" component={Login} />
+          <PublicRoute path="/login" component={Authentication} />
           <Route
             path="/profile"
             render={({ match: { path } }) => (
               <Switch>
                 <ProtectedRoute path={`${path}`} component={Profile} exact />
+                <ProtectedRoute path={`${path}/cart`} component={Cart} />
                 <ProtectedRoute
                   path={`${path}/wishlist`}
                   component={Wishlist}

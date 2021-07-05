@@ -15,7 +15,6 @@ import * as jwt from 'jsonwebtoken';
 import { UserResponseObject } from './user.dto';
 
 import { ProductEntity } from 'src/product/product.entity';
-import { type } from 'node:os';
 import { OrderEntity } from 'src/order/order.entity';
 import { RoleEntity } from 'src/role/role.entity';
 
@@ -30,6 +29,10 @@ export class UserEntity {
   @Column({ length: 255, select: false }) password: string;
 
   @Column({ length: 255 }) email: string;
+
+  @Column({ length: 255 }) firstname: string;
+
+  @Column({ length: 255 }) lastname: string;
 
   @ManyToMany(() => RoleEntity)
   @JoinTable()

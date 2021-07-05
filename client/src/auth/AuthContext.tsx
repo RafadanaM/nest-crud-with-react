@@ -30,21 +30,25 @@ const AuthProvider = ({ children }: IProps) => {
 
   const login = (username: string, password: string) => {
     setLoginError(false);
+    if (username.length === 0 || password.length === 0) {
+      setLoginError(true);
+      setLoginMessage("username and password cannot be empty!");
+    } else {
+      axios
+        .post("login", { username: username, password: password })
+        .then(({ data }) => {
+          console.log(data);
 
-    axios
-      .post("login", { username: username, password: password })
-      .then(({ data }) => {
-        console.log(data);
-
-        setCurrentUser(data);
-        setLoginMessage("Login Success");
-        setLoginError(false);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-        setLoginMessage(error.response.data.message.message);
-        setLoginError(true);
-      });
+          setCurrentUser(data);
+          setLoginMessage("Login Success");
+          setLoginError(false);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          setLoginMessage(error.response.data.message.message);
+          setLoginError(true);
+        });
+    }
   };
 
   const logout = () => {

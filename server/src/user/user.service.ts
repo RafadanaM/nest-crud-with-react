@@ -90,6 +90,8 @@ export class UserService {
       .leftJoin('users.roles', 'roles')
       .getOne();
     if (!user) {
+      console.log('USER SERVICE NOT USER');
+
       throw new UnauthorizedException('Invalid username/password');
     }
 

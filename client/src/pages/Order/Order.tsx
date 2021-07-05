@@ -109,7 +109,9 @@ const Order = () => {
         </Typography>
         {renderFilter()}
       </div>
-      {orders.length === 0 && <div>No Order</div>}
+      {orders.length === 0 && (
+        <Typography variant="h1">Order is empty!</Typography>
+      )}
       {orders.map((order) => {
         return <OrderCard key={order.id} order={order} url={url} />;
       })}
