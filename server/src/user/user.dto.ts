@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsString,
   Length,
+  Matches,
 } from 'class-validator';
 import { ProductEntity } from 'src/product/product.entity';
 import { RoleEntity } from 'src/role/role.entity';
@@ -18,7 +19,7 @@ export class UserDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(8, 255)
+  @Length(6, 255)
   @IsAlphanumeric()
   password: string;
 
@@ -27,14 +28,16 @@ export class UserDto {
   @IsNotEmpty()
   email: string;
 
-  @IsString()
+  @Matches(/^[a-zA-Z ]{1,30}$/, {
+    message: '$property must contain only letters',
+  })
   @IsNotEmpty()
-  @IsAlpha()
   firstname: string;
 
-  @IsString()
+  @Matches(/^[a-zA-Z ]{1,30}$/, {
+    message: '$property must contain only letters',
+  })
   @IsNotEmpty()
-  @IsAlpha()
   lastname: string;
 }
 

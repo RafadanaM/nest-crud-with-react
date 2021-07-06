@@ -18,6 +18,7 @@ const useStyle = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    width: "90%",
     backgroundColor: theme.palette.background.paper,
     // height: "600px",
     // width: "500px",

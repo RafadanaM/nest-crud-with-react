@@ -8,22 +8,20 @@ import {
 } from "@material-ui/core";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 
-// import { useAuth } from "../auth/AuthContext";
 const useStyle = makeStyles((theme) => ({
   loginContainer: {
-    width: "90%",
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: theme.palette.background.default,
     borderBottomLeftRadius: "10px",
     borderBottomRightRadius: "10px",
     padding: "2em",
   },
   registerField: {
-    margin: "1rem",
     color: "white",
   },
   input: {
@@ -53,10 +51,17 @@ const useStyle = makeStyles((theme) => ({
     borderColor: "red",
   },
   icon: { color: "#d8d8d8" },
+  errorText: { color: theme.palette.error.main },
+  registerButton: {
+    "&:disabled": {
+      color: theme.palette.background.default,
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
 }));
 const Register = () => {
   const css = useStyle();
-  //   const { login, loginMessage, loginError } = useAuth();
+  const { register, registerError } = useAuth();
   interface State {
     firstName: string;
     lastName: string;
@@ -93,8 +98,8 @@ const Register = () => {
       registerValueError.password.value ||
       registerValueError.confirmPassword.value ||
       isEmpty;
-    console.log(registerValueError);
-    console.log("BUTTON " + shouldBeDisabled);
+    // console.log(registerValueError);
+    // console.log("BUTTON " + shouldBeDisabled);
     setDisabled(shouldBeDisabled);
   }, [registerValue, registerValueError]);
 
@@ -179,10 +184,23 @@ const Register = () => {
   const registerHandler = (event: any) => {
     event.preventDefault();
     setDisabled(true);
-    // login(username, password);
-    // setPassword("");
-    // setUsername("");
-    // setDisabled(false);
+    register(
+      registerValue.username,
+      registerValue.password,
+      registerValue.email,
+      registerValue.firstName,
+      registerValue.lastName
+    );
+
+    setRegisterValue({
+      firstName: "",
+      lastName: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+      email: "",
+    });
+    setDisabled(false);
   };
 
   return (
@@ -198,6 +216,7 @@ const Register = () => {
         helperText={registerValueError.firstName.msg}
         error={registerValueError.firstName.value}
         fullWidth
+        margin="normal"
         classes={{ root: css.input }}
       />
       <TextField
@@ -211,6 +230,7 @@ const Register = () => {
         helperText={registerValueError.lastName.msg}
         error={registerValueError.lastName.value}
         fullWidth
+        margin="normal"
         classes={{ root: css.input }}
       />
       <TextField
@@ -224,6 +244,7 @@ const Register = () => {
         helperText={registerValueError.username.msg}
         error={registerValueError.username.value}
         fullWidth
+        margin="normal"
         classes={{ root: css.input }}
       />
       <TextField
@@ -238,6 +259,7 @@ const Register = () => {
         helperText={registerValueError.email.msg}
         error={registerValueError.email.value}
         fullWidth
+        margin="normal"
         classes={{ root: css.input }}
       />
       <TextField
@@ -252,6 +274,7 @@ const Register = () => {
         helperText={registerValueError.password.msg}
         error={registerValueError.password.value}
         fullWidth
+        margin="normal"
         classes={{ root: css.input }}
         InputProps={{
           endAdornment: (
@@ -284,6 +307,7 @@ const Register = () => {
         helperText={registerValueError.confirmPassword.msg}
         error={registerValueError.confirmPassword.value}
         fullWidth
+        margin="normal"
         classes={{ root: css.input }}
         InputProps={{
           endAdornment: (
@@ -304,12 +328,16 @@ const Register = () => {
           ),
         }}
       />
+      {registerError.value && (
+        <p className={css.errorText}>{registerError.msg}</p>
+      )}
       <Button
         type="button"
         variant="contained"
         color="secondary"
         onClick={registerHandler}
         disabled={disabled}
+        className={css.registerButton}
       >
         Login
       </Button>

@@ -34,6 +34,16 @@ let theme = createMuiTheme({
       color: "white",
     },
   },
+  overrides: {
+    MuiOutlinedInput: {
+      input: {
+        "&:-webkit-autofill": {
+          "-webkit-box-shadow": "0 0 0 100px #333333 inset",
+          "-webkit-text-fill-color": "#fff",
+        },
+      },
+    },
+  },
 });
 theme = responsiveFontSizes(theme);
 export default theme;

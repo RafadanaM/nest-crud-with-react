@@ -9,17 +9,27 @@ interface IProps {
 interface AuthContextProps {
   currentUser: UserInfo | null;
   login: (username: string, password: string) => void;
+  register: (
+    username: string,
+    password: string,
+    email: string,
+    firstname: string,
+    lastname: string
+  ) => void;
   logout: () => void;
   loginMessage: string;
   loginError: boolean;
+  registerError: { value: boolean; msg: string };
 }
 
 const AuthContext = createContext<AuthContextProps>({
   currentUser: null,
-  login: (username: string, password: string) => {},
+  login: () => {},
+  register: () => {},
   logout: () => {},
   loginMessage: "",
   loginError: false,
+  registerError: { value: false, msg: "" },
 });
 
 const AuthProvider = ({ children }: IProps) => {
@@ -27,6 +37,29 @@ const AuthProvider = ({ children }: IProps) => {
   const [loading, setLoading] = useState(true);
   const [loginMessage, setLoginMessage] = useState("");
   const [loginError, setLoginError] = useState(false);
+  const [registerError, setRegisterError] = useState({ value: false, msg: "" });
+
+  const register = (
+    username: string,
+    password: string,
+    email: string,
+    firstname: string,
+    lastname: string
+  ) => {
+    axios
+      .post("register", { username, password, email, firstname, lastname })
+      .then(({ data }) => {
+        console.log(data);
+        alert("Register Successful, please login");
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+        setRegisterError({
+          value: true,
+          msg: error.response?.data.message,
+        });
+      });
+  };
 
   const login = (username: string, password: string) => {
     setLoginError(false);
@@ -81,6 +114,8 @@ const AuthProvider = ({ children }: IProps) => {
     currentUser: currentUser,
     login: login,
     logout: logout,
+    register: register,
+    registerError: registerError,
     loginMessage: loginMessage,
     loginError: loginError,
   };

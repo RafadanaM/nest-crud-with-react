@@ -61,24 +61,29 @@ export class UserEntity {
   // }
 
   toResponseObject(showToken: boolean = true): UserResponseObject {
-    const { id, created, username, email } = this;
+    const { id, created, username, email, firstname, lastname } = this;
 
-    const responseObject: any = { id, created, username, email };
+    const responseObject: any = {
+      id,
+      created,
+      username,
+      email,
+      firstname,
+      lastname,
+    };
     if (this.roles) {
       const role = this.roles.map(({ name }) => name);
 
       responseObject.roles = role;
     }
 
-    if (showToken) {
-      // responseObject.token = token;
-    }
     if (this.products) {
       responseObject.products = this.products;
     }
 
-    responseObject.bookmarks = this.wishlist;
-    console.log('RESPONSE OBJECT ROLES: ' + responseObject.roles);
+    if (this.wishlist) {
+      responseObject.bookmarks = this.wishlist;
+    }
 
     return responseObject;
   }
