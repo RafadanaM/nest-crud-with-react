@@ -8,7 +8,7 @@ import {
 
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
-import axios from "../../axios/axios";
+import { getOrderByUser } from "../../api/OrderAPI";
 import BackButton from "../../components/BackButton/BackButton";
 import OrderCard from "../../components/OrderCard/OrderCard";
 import { Status } from "../../enum/enum";
@@ -84,14 +84,13 @@ const Order = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(`orders/user?status=${filter}`)
-      .then(({ data }) => {
+    getOrderByUser(filter)
+      .then((data) => {
         console.log(data);
         setOrders(data);
       })
-      .catch((e) => {
-        alert(e);
+      .catch((error) => {
+        console.log(error);
       });
     history.replace({
       search: `?status=${filter}`,

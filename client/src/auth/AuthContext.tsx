@@ -1,5 +1,13 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react";
-import axios from "../axios/axios";
+import React, {
+  createContext,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { loginUser, logoutUser, registerUser } from "../api/AuthAPI";
+import { getCurrentUser } from "../api/UserAPI";
+
 import { UserInfo } from "../interfaces/interface";
 
 interface IProps {
@@ -8,6 +16,8 @@ interface IProps {
 
 interface AuthContextProps {
   currentUser: UserInfo | null;
+  setCurrentUser: React.Dispatch<React.SetStateAction<UserInfo | null>>;
+  loading: boolean;
   login: (username: string, password: string) => void;
   register: (
     username: string,
@@ -24,8 +34,10 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps>({
   currentUser: null,
+  loading: false,
   login: () => {},
   register: () => {},
+  setCurrentUser: () => {},
   logout: () => {},
   loginMessage: "",
   loginError: false,
@@ -34,7 +46,8 @@ const AuthContext = createContext<AuthContextProps>({
 
 const AuthProvider = ({ children }: IProps) => {
   const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
   const [loginError, setLoginError] = useState(false);
   const [registerError, setRegisterError] = useState({ value: false, msg: "" });
@@ -46,32 +59,28 @@ const AuthProvider = ({ children }: IProps) => {
     firstname: string,
     lastname: string
   ) => {
-    axios
-      .post("register", { username, password, email, firstname, lastname })
-      .then(({ data }) => {
-        console.log(data);
-        alert("Register Successful, please login");
-      })
+    setLoading(true);
+    registerUser(username, password, email, firstname, lastname)
+      .then(() => alert("Register Successful, please login"))
       .catch((error) => {
         console.log(error.response.data);
         setRegisterError({
           value: true,
           msg: error.response?.data.message,
         });
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const login = (username: string, password: string) => {
     setLoginError(false);
+    setLoading(true);
     if (username.length === 0 || password.length === 0) {
       setLoginError(true);
       setLoginMessage("username and password cannot be empty!");
     } else {
-      axios
-        .post("login", { username: username, password: password })
-        .then(({ data }) => {
-          console.log(data);
-
+      loginUser(username, password)
+        .then((data) => {
           setCurrentUser(data);
           setLoginMessage("Login Success");
           setLoginError(false);
@@ -80,52 +89,47 @@ const AuthProvider = ({ children }: IProps) => {
           console.log(error.response.data);
           setLoginMessage(error.response.data.message.message);
           setLoginError(true);
-        });
+        })
+        .finally(() => setLoading(false));
     }
   };
 
   const logout = () => {
-    axios
-      .post("logout")
-      .then(() => {
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    logoutUser()
+      .then(() => window.location.reload())
+      .catch((error) => console.log(error));
   };
 
   const getUser = () => {
-    axios
-      .get("userInfo")
-      .then(({ data }) => {
-        console.log(data);
-        setCurrentUser(data);
-      })
-      .catch((e) => {
+    getCurrentUser()
+      .then((data) => setCurrentUser(data))
+      .catch((error) => {
         setCurrentUser(null);
-        console.log(e);
+        console.log(error);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setInitialLoading(false));
   };
-  const AuthContextValue: AuthContextProps = {
-    currentUser: currentUser,
-    login: login,
-    logout: logout,
-    register: register,
-    registerError: registerError,
-    loginMessage: loginMessage,
-    loginError: loginError,
-  };
+  const AuthContextValue: AuthContextProps = useMemo(
+    () => ({
+      loading,
+      currentUser,
+      login,
+      logout,
+      register,
+      registerError,
+      loginMessage,
+      loginError,
+      setCurrentUser,
+    }),
+    [loading, loginError, registerError, currentUser, loginMessage]
+  );
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, [setCurrentUser]);
   return (
     <AuthContext.Provider value={AuthContextValue}>
-      {!loading && children}
+      {!initialLoading && children}
     </AuthContext.Provider>
   );
 };

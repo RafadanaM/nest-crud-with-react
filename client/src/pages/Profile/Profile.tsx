@@ -1,7 +1,6 @@
 import {
   Avatar,
   Button,
-  CircularProgress,
   FormControlLabel,
   Grid,
   makeStyles,
@@ -11,9 +10,8 @@ import {
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
-import axios from "../../axios/axios";
 import { Mode, months } from "../../enum/enum";
-import { IconText, User } from "../../interfaces/interface";
+import { IconText } from "../../interfaces/interface";
 import {
   FavoriteBorderOutlined,
   ReceiptOutlined,
@@ -22,7 +20,7 @@ import {
 } from "@material-ui/icons";
 import SubMenu from "../../components/SubMenu/SubMenu";
 import BackButton from "../../components/BackButton/BackButton";
-import { useHistory, useLocation } from "react-router";
+import { Redirect, useHistory, useLocation } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -111,7 +109,6 @@ const Profile = () => {
   let history = useHistory();
   const { currentUser } = useAuth();
 
-  const [user, setUser] = useState<User | null>(null);
   const [mode, setMode] = useState(
     Object.values(Mode).includes(query.get("mode") as Mode)
       ? (query.get("mode") as Mode)
@@ -133,28 +130,26 @@ const Profile = () => {
 
   useEffect(() => {
     if (currentUser) {
-      axios.get(`user/${currentUser.id}`).then(({ data }) => {
-        setUser(data);
-        if (data.roles.includes("Seller")) {
-          history.replace({
-            search: `?mode=${mode}`,
-          });
-        } else {
-          history.replace({
-            search: "?mode=buyer",
-          });
-        }
-      });
+      console.log(currentUser);
+      if (currentUser.roles.includes("Seller")) {
+        history.replace({
+          search: `?mode=${mode}`,
+        });
+      } else {
+        history.replace({
+          search: "?mode=buyer",
+        });
+      }
     }
     // eslint-disable-next-line
   }, [mode, history]);
-  return user ? (
+  return currentUser ? (
     <div className={css.divBase}>
       <Grid container spacing={2} justify="center" className={css.gridBase}>
         <Grid container justify="space-between" item xs={12}>
           <BackButton title="Home" />
 
-          {user.roles.includes("Seller") ? (
+          {currentUser.roles.includes("Seller") ? (
             <FormControlLabel
               control={
                 <Switch checked={mode === Mode.Seller} onClick={changeMode} />
@@ -183,9 +178,9 @@ const Profile = () => {
             </Typography>
 
             <ul className={css.list}>
-              <li>{`Username: ${user.username}`}</li>
-              <li>{`Email: ${user.email}`}</li>
-              <li>{`Member Since: ${showDate(user.created)}`}</li>
+              <li>{`Username: ${currentUser.username}`}</li>
+              <li>{`Email: ${currentUser.email}`}</li>
+              <li>{`Member Since: ${showDate(currentUser.created)}`}</li>
             </ul>
           </Paper>
         </Grid>
@@ -194,7 +189,7 @@ const Profile = () => {
       <SubMenu subMenu={mode === Mode.Seller ? subMenuSeller : subMenuBuyer} />
     </div>
   ) : (
-    <CircularProgress />
+    <Redirect to="/" />
   );
 };
 

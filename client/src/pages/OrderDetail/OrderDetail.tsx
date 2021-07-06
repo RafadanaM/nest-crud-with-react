@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 import { AxiosError } from "axios";
 import { Status } from "../../enum/enum";
 import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
+import { changeOrderStatus, getOrder } from "../../api/OrderAPI";
 const useStyles = makeStyles({
   baseContainer: {
     display: "flex",
@@ -45,15 +46,10 @@ const OrderDetail = () => {
   const changeOrder = (status: string) => {
     setDisabled(true);
     if (status === Status.WaitingForPayment || status === Status.Delivering) {
-      axios
-        .post(
-          `orders/${id}/${
-            status === Status.WaitingForPayment ? "pay" : "received"
-          }`
-        )
+      const action = status === Status.WaitingForPayment ? "pay" : "received";
+      changeOrderStatus(id, action)
         .then(() => {
           alert("Successful");
-
           setOrder((prevState) => {
             if (prevState) {
               return {
@@ -67,22 +63,17 @@ const OrderDetail = () => {
             return null;
           });
         })
-        .catch((err) => {
+        .catch((error) => {
           alert("Failed");
         })
         .finally(() => {
           setDisabled(false);
         });
-    } else {
-      return null;
     }
   };
   useEffect(() => {
-    axios
-      .get(`orders/${id}`)
-      .then(({ data }) => {
-        console.log(data);
-
+    getOrder(id)
+      .then((data) => {
         setOrder(data);
       })
       .catch((err: AxiosError) => {

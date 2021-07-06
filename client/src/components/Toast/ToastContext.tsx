@@ -1,5 +1,7 @@
 import { CssBaseline, makeStyles, Snackbar } from "@material-ui/core";
+import axios, { AxiosInstance } from "axios";
 import React, { createContext, ReactNode, useEffect, useState } from "react";
+import axiosInstance from "../../axios/axios";
 
 const useStyles = makeStyles((theme) => ({
   baseContainer: {
@@ -64,7 +66,7 @@ interface ToastContextProps {
 }
 
 const ToastContext = createContext<ToastContextProps>({
-  openToast: (message: string) => {},
+  openToast: () => {},
 });
 const ToastProvider = ({ children }: IProps) => {
   const css = useStyles();
@@ -76,26 +78,34 @@ const ToastProvider = ({ children }: IProps) => {
     setOpen(true);
   };
 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   const ToastContextValue: ToastContextProps = {
     openToast: openToast,
   };
   return (
     <ToastContext.Provider value={ToastContextValue}>
-      {children}
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "left",
+          horizontal: "right",
         }}
         open={open}
         autoHideDuration={3000}
         message={message}
+        onClose={handleClose}
       />
-      ;
+      {children}
     </ToastContext.Provider>
   );
 };
 
-const useToast = () => React.useContext(ToastContext);
+const useToastS = () => React.useContext(ToastContext);
 
-export { ToastProvider, useToast };
+export { ToastProvider, useToastS };

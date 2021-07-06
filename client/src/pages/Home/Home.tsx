@@ -1,7 +1,9 @@
-import { Grid, makeStyles, Paper } from "@material-ui/core";
+import { Button, Grid, makeStyles, Paper } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import axios from "../../axios/axios";
+
+import { getProducts } from "../../api/ProductAPI";
 import ProductCard from "../../components/ProductCard/ProductCard";
+import { useToastS } from "../../components/Toast/ToastContext";
 import { Product } from "../../interfaces/interface";
 
 const useStyle = makeStyles((theme) => ({
@@ -22,18 +24,16 @@ const useStyle = makeStyles((theme) => ({
 }));
 const Home = () => {
   const css = useStyle();
+  const { openToast } = useToastS();
   const [products, setProducts] = useState<Product[]>([]);
-  const getProducts = (): void => {
-    axios.get("/product").then(({ data }) => {
-      console.log(data);
-
-      setProducts(data);
-    });
-  };
 
   useEffect(() => {
-    getProducts();
+    getProducts().then((data) => setProducts(data));
   }, []);
+
+  const open = () => {
+    openToast("test");
+  };
 
   const renderProduct = () => {
     if (products.length > 0) {
@@ -50,6 +50,7 @@ const Home = () => {
   return (
     <Paper elevation={0} className={css.baseContainer}>
       <Grid container alignItems="center" justify="flex-start" spacing={3}>
+        <Button onClick={open}>CLICK</Button>
         {renderProduct()}
         {/* <Grid item md={4} lg={3} key={products[0].id}>
           <ProductCard product={products[0]} />

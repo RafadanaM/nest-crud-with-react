@@ -18,6 +18,14 @@ import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
 import { Favorite } from "@material-ui/icons";
 import { useAuth } from "../../auth/AuthContext";
 import BackButton from "../../components/BackButton/BackButton";
+import theme from "../../theme";
+
+import {
+  bookmarkProduct,
+  getProduct,
+  orderProduct,
+} from "../../api/ProductAPI";
+import { getUserWishlist } from "../../api/UserAPI";
 const useStyles = makeStyles({
   baseContainer: {
     display: "flex",
@@ -52,6 +60,7 @@ const useStyles = makeStyles({
   },
   list: {
     padding: 0,
+    color: theme.palette.primary.contrastText,
     margin: "0.25rem",
     "& li": {
       listStyleType: "none",
@@ -102,43 +111,21 @@ const ProductDetail = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [isInWishlist, setIsInWistlist] = useState(false);
   const { currentUser } = useAuth();
-  const order = () => {
+  const order = async () => {
     setButtonDisabled(true);
-    axios
-      .post(`/product/${id}/order`, {
-        order: { note: `This is a note for product ${id}` },
-        item: { quantity: 3 },
-      })
-      .then(({ data }) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setButtonDisabled(false);
-      });
+    orderProduct(id);
+    setButtonDisabled(false);
   };
   const wishlist = () => {
-    axios
-      .post(`/product/${id}/bookmark`)
-      .then(({ data }) => {
-        console.log(data);
-        if (data.isAdd) {
-          setIsInWistlist(true);
-        } else {
-          setIsInWistlist(false);
-        }
+    bookmarkProduct(id)
+      .then((data) => {
+        data.isAdd ? setIsInWistlist(true) : setIsInWistlist(false);
       })
-      .catch((err) => {
-        console.log(err.data);
-      });
+      .catch((err) => console.log(err));
   };
 
   const getWishlist = () => {
-    axios.get("user/wishlist").then(({ data }) => {
-      console.log(data);
-
+    getUserWishlist().then((data) => {
       const match = data.filter(
         (wishlistedProduct: any) => wishlistedProduct.id === id
       ).length;
@@ -151,18 +138,13 @@ const ProductDetail = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(`/product/${id}`)
-      .then(({ data }) => {
-        if (currentUser) {
-          getWishlist();
-        }
-
+    getProduct(id)
+      .then((data) => {
+        if (currentUser) getWishlist();
         setProduct(data);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => console.log(err));
+
     // eslint-disable-next-line
   }, [id]);
   return product ? (
@@ -234,7 +216,7 @@ const ProductDetail = () => {
                       onClick={() => order()}
                       disabled={buttonDisabled}
                     >
-                      Buy Now
+                      ORDER Now
                     </Button>
                   </Box>
                 </Box>

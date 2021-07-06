@@ -17,57 +17,68 @@ import OrderDetail from "../pages/OrderDetail/OrderDetail";
 import ManageOrder from "../pages/ManageOrder/ManageOrder";
 import Cart from "../pages/Cart/Cart";
 import Authentication from "../pages/Authentication/Authentication";
+import { ToastProvider } from "../components/Toast/ToastContext";
+import { WithAxios } from "../axios/WithAxios";
 
 const Router = () => {
   return (
     <BrowserRouter>
       <div className={classes.base}>
-        <Navbar />
-        <ToastContainer />
-        <Switch>
-          <PublicRoute exact path="/" component={Home} />
-          <PublicRoute path="/login" component={Authentication} />
-          <Route
-            path="/profile"
-            render={({ match: { path } }) => (
-              <Switch>
-                <ProtectedRoute path={`${path}`} component={Profile} exact />
-                <ProtectedRoute path={`${path}/cart`} component={Cart} />
-                <ProtectedRoute
-                  path={`${path}/wishlist`}
-                  component={Wishlist}
-                />
-                <ProtectedRoute
-                  path={`${path}/order-manage`}
-                  component={ManageOrder}
-                />
+        <WithAxios>
+          <ToastProvider>
+            <Navbar />
+            <ToastContainer />
 
-                <Route
-                  path={`${path}/order`}
-                  render={({ match: { path } }) => (
-                    <>
-                      <ProtectedRoute
-                        path={`${path}`}
-                        component={Order}
-                        exact
-                      />
-                      <ProtectedRoute
-                        path={`${path}/:id`}
-                        component={OrderDetail}
-                      />
-                    </>
-                  )}
-                />
-                <Redirect to="/404" />
-              </Switch>
-            )}
-          />
-          {/* <ProtectedRoute path="/profile/wishlist" component={Wishlist} />
+            <Switch>
+              <PublicRoute exact path="/" component={Home} />
+              <PublicRoute path="/login" component={Authentication} />
+              <Route
+                path="/profile"
+                render={({ match: { path } }) => (
+                  <Switch>
+                    <ProtectedRoute
+                      path={`${path}`}
+                      component={Profile}
+                      exact
+                    />
+                    <ProtectedRoute path={`${path}/cart`} component={Cart} />
+                    <ProtectedRoute
+                      path={`${path}/wishlist`}
+                      component={Wishlist}
+                    />
+                    <ProtectedRoute
+                      path={`${path}/order-manage`}
+                      component={ManageOrder}
+                    />
+
+                    <Route
+                      path={`${path}/order`}
+                      render={({ match: { path } }) => (
+                        <>
+                          <ProtectedRoute
+                            path={`${path}`}
+                            component={Order}
+                            exact
+                          />
+                          <ProtectedRoute
+                            path={`${path}/:id`}
+                            component={OrderDetail}
+                          />
+                        </>
+                      )}
+                    />
+                    <Redirect to="/404" />
+                  </Switch>
+                )}
+              />
+              {/* <ProtectedRoute path="/profile/wishlist" component={Wishlist} />
           <ProtectedRoute path="/profile/orders" component={Order} /> */}
-          <PublicRoute path="/product/:id" component={ProductDetail} />
-          <PublicRoute path="/404" component={NotFound} />
-          <Redirect to="/404" />
-        </Switch>
+              <PublicRoute path="/product/:id" component={ProductDetail} />
+              <PublicRoute path="/404" component={NotFound} />
+              <Redirect to="/404" />
+            </Switch>
+          </ToastProvider>
+        </WithAxios>
       </div>
     </BrowserRouter>
   );

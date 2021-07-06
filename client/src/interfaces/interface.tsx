@@ -10,7 +10,8 @@ export interface UserInfo {
   id: string;
   created: Date;
   username: string;
-  role: string[];
+  roles: string[];
+  email: string;
   bookmarks: Product[];
 }
 

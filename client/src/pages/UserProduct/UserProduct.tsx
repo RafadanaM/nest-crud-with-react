@@ -7,6 +7,7 @@ import {
   AssignmentTurnedInOutlined,
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
+import { getProductsByUser } from "../../api/ProductAPI";
 import axios from "../../axios/axios";
 import BackButton from "../../components/BackButton/BackButton";
 import SubMenu from "../../components/SubMenu/SubMenu";
@@ -55,10 +56,7 @@ const UserProduct = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    axios.get("product/user").then(({ data }) => {
-      console.log(data);
-      setProducts(data);
-    });
+    getProductsByUser().then((data) => setProducts(data));
   }, []);
 
   return (

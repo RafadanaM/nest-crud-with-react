@@ -1,5 +1,6 @@
 import { Grid } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
+import { getUserWishlist } from "../../api/UserAPI";
 import axios from "../../axios/axios";
 import BackButton from "../../components/BackButton/BackButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
@@ -8,10 +9,7 @@ const Wishlist = () => {
   const [wishlists, setWishlists] = useState<null | Product[]>([]);
 
   useEffect(() => {
-    axios.get("user/wishlist").then(({ data }) => {
-      console.log(data);
-      setWishlists(data);
-    });
+    getUserWishlist().then((data) => setWishlists(data));
   }, []);
 
   return (

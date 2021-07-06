@@ -8,6 +8,7 @@ import { Box, Button, Grid, makeStyles, Typography } from "@material-ui/core";
 // } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router";
+import { changeOrderStatus, getOrderItemByUser } from "../../api/OrderItemAPI";
 import axios from "../../axios/axios";
 import BackButton from "../../components/BackButton/BackButton";
 import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
@@ -126,8 +127,7 @@ const ManageOrder = () => {
         return null;
     }
 
-    axios
-      .post(`order-item/${orderId}?action=${action}`)
+    changeOrderStatus(orderId, action)
       .then(() => {
         setOrderItems((prevState) =>
           prevState.filter(({ id }) => id !== orderId)
@@ -139,14 +139,12 @@ const ManageOrder = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(`order-item/status?status=${filter}`)
-      .then(({ data }) => {
-        console.log(data);
+    getOrderItemByUser(filter)
+      .then((data) => {
         setOrderItems(data);
       })
-      .catch((e) => {
-        alert(e);
+      .catch((error) => {
+        alert(error);
       });
     history.replace({
       search: `?status=${filter}`,
