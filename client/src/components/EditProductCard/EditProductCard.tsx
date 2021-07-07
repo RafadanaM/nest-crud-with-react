@@ -13,13 +13,11 @@ import { findByLabelText } from "@testing-library/react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { Product } from "../../interfaces/interface";
-interface EditProductCardI {
-  product: Product;
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    margin: "10px",
+    margin: "5px",
+    minWidth: "275px",
   },
   cardHeader: {
     display: "flex",
@@ -83,7 +81,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EditProductCard = ({ product }: EditProductCardI) => {
+interface EditProductCardI {
+  product: Product;
+  onOpenModal: (productId: string) => void;
+}
+
+const EditProductCard = ({ product, onOpenModal }: EditProductCardI) => {
   const css = useStyles();
 
   return (
@@ -124,16 +127,18 @@ const EditProductCard = ({ product }: EditProductCardI) => {
         </Box>
       </CardContent>
       <CardActions className={css.buttonContainer}>
-        <Link to="profile" className={css.link}>
-          <Button variant="contained" fullWidth className={css.buttonError}>
-            HIDE
-          </Button>
-        </Link>
-        <Link to="profile" className={css.link}>
-          <Button variant="contained" fullWidth color="secondary">
-            EDIT
-          </Button>
-        </Link>
+        <Button variant="contained" fullWidth className={css.buttonError}>
+          HIDE
+        </Button>
+
+        <Button
+          variant="contained"
+          fullWidth
+          color="secondary"
+          onClick={() => onOpenModal(product.id)}
+        >
+          EDIT
+        </Button>
       </CardActions>
     </Card>
   );
