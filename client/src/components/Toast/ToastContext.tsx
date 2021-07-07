@@ -93,8 +93,8 @@ const ToastProvider = ({ children }: IProps) => {
     <ToastContext.Provider value={ToastContextValue}>
       <Snackbar
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
+          vertical: "top",
+          horizontal: "center",
         }}
         open={open}
         autoHideDuration={3000}

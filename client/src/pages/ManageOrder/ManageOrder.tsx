@@ -152,7 +152,7 @@ const ManageOrder = () => {
   }, [filter, history]);
 
   return (
-    <div className={css.baseContainer}>
+    <>
       <Grid item xs={12}>
         <BackButton title="Profile" />
       </Grid>
@@ -192,7 +192,7 @@ const ManageOrder = () => {
           )}
         </div>
       ))}
-    </div>
+    </>
   );
 };
 

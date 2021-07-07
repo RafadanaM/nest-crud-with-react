@@ -19,16 +19,16 @@ import Cart from "../pages/Cart/Cart";
 import Authentication from "../pages/Authentication/Authentication";
 import { ToastProvider } from "../components/Toast/ToastContext";
 import { WithAxios } from "../axios/WithAxios";
+import ManageProduct from "../pages/ManageProduct/ManageProduct";
 
 const Router = () => {
   return (
     <BrowserRouter>
       <div className={classes.base}>
         <WithAxios>
+          {/* <ToastContainer /> */}
+          <Navbar />
           <ToastProvider>
-            <Navbar />
-            <ToastContainer />
-
             <Switch>
               <PublicRoute exact path="/" component={Home} />
               <PublicRoute path="/login" component={Authentication} />
@@ -49,6 +49,10 @@ const Router = () => {
                     <ProtectedRoute
                       path={`${path}/order-manage`}
                       component={ManageOrder}
+                    />
+                    <ProtectedRoute
+                      path={`${path}/product-manage`}
+                      component={ManageProduct}
                     />
 
                     <Route
