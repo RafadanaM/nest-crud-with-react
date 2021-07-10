@@ -13,6 +13,8 @@ import { CommentModule } from './comment/comment.module';
 import { OrderModule } from './order/order.module';
 import { OrderItemModule } from './order-item/order-item.module';
 import { RoleModule } from './role/role.module';
+import { CartModule } from './cart/cart.module';
+import { CartItemModule } from './cart-item/cart-item.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { RoleModule } from './role/role.module';
     OrderModule,
     OrderItemModule,
     RoleModule,
+    CartModule,
+    CartItemModule,
   ],
   controllers: [AppController],
   providers: [

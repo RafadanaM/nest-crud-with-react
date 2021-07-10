@@ -1,4 +1,5 @@
 import { type } from 'node:os';
+import { cartItemEntity } from 'src/cart-item/cart-item.entity';
 import { CommentEntity } from 'src/comment/comment.entity';
 import { OrderItemEntity } from 'src/order-item/order-item.entity';
 import { UserEntity } from 'src/user/user.entity';
@@ -52,4 +53,7 @@ export class ProductEntity {
 
   @OneToMany((type) => OrderItemEntity, (order_item) => order_item.product)
   order_items: OrderItemEntity[];
+
+  @OneToMany((type) => cartItemEntity, (order_item) => order_item.product)
+  cart_items: OrderItemEntity[];
 }

@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -17,6 +19,7 @@ import { UserResponseObject } from './user.dto';
 import { ProductEntity } from 'src/product/product.entity';
 import { OrderEntity } from 'src/order/order.entity';
 import { RoleEntity } from 'src/role/role.entity';
+import { CartEntity } from 'src/cart/cart.entity';
 
 @Entity()
 export class UserEntity {
@@ -49,6 +52,12 @@ export class UserEntity {
   @ManyToMany((type) => ProductEntity, { cascade: true })
   @JoinTable()
   wishlist: ProductEntity[];
+
+  @OneToOne((type) => OrderEntity, (order) => order.order_user, {
+    cascade: true,
+  })
+  @JoinColumn()
+  cart: CartEntity;
 
   @BeforeInsert()
   async hashPassword() {
