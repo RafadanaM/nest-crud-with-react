@@ -1,8 +1,9 @@
-import { cartItemEntity } from 'src/cart-item/cart-item.entity';
+import { CartItemEntity } from 'src/cart-item/cart-item.entity';
 import { UserEntity } from 'src/user/user.entity';
 import {
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -17,10 +18,13 @@ export class CartEntity {
 
   @UpdateDateColumn() updated: Date;
 
-  @OneToOne((type) => UserEntity, (user) => user.cart) cart_user: UserEntity;
+  @OneToOne((type) => UserEntity, (user) => user.cart)
+  @JoinColumn()
+  cart_user: UserEntity;
 
-  @OneToMany((type) => cartItemEntity, (cart_item) => cart_item.cart, {
+  @OneToMany((type) => CartItemEntity, (cart_item) => cart_item.cart, {
+    eager: true,
     cascade: true,
   })
-  cart_items: cartItemEntity[];
+  cart_items: CartItemEntity[];
 }

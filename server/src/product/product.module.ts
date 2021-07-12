@@ -8,26 +8,15 @@ import { OrderEntity } from 'src/order/order.entity';
 import { OrderModule } from 'src/order/order.module';
 import { OrderService } from 'src/order/order.service';
 import { UserEntity } from 'src/user/user.entity';
+import { UserModule } from 'src/user/user.module';
 import { ProductController } from './product.controller';
 import { ProductEntity } from './product.entity';
 import { ProductService } from './product.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      ProductEntity,
-      UserEntity,
-      OrderEntity,
-      OrderItemEntity,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([ProductEntity]), UserModule, OrderModule],
   controllers: [ProductController],
-  providers: [
-    ProductService,
-    OrderItemService,
-    OrderService,
-    { provide: APP_PIPE, useClass: ValidationPipe },
-  ],
-  exports: [ProductService]
+  providers: [ProductService, { provide: APP_PIPE, useClass: ValidationPipe }],
+  exports: [ProductService],
 })
 export class ProductModule {}

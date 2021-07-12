@@ -9,7 +9,10 @@ import e from 'express';
 import { OrderAction } from 'src/enums/action.enum';
 import { Status } from 'src/enums/status.enum';
 import { OrderEntity } from 'src/order/order.entity';
+import { OrderService } from 'src/order/order.service';
+import { ProductDTO } from 'src/product/product.dto';
 import { ProductEntity } from 'src/product/product.entity';
+import { ProductService } from 'src/product/product.service';
 import { Repository } from 'typeorm';
 import { OrderItemDTO } from './order-item.dto';
 import { OrderItemEntity } from './order-item.entity';
@@ -19,10 +22,8 @@ export class OrderItemService {
   constructor(
     @InjectRepository(OrderItemEntity)
     private orderItemRepository: Repository<OrderItemEntity>,
-    @InjectRepository(OrderEntity)
-    private orderRepository: Repository<OrderEntity>,
-    @InjectRepository(ProductEntity)
-    private productRepository: Repository<ProductEntity>,
+    private readonly orderService: OrderService,
+    private readonly productService: ProductService,
   ) {}
 
   private isOwned(orderItem: OrderItemEntity, userId: string) {
@@ -44,21 +45,19 @@ export class OrderItemService {
     productId: string,
     data: OrderItemDTO,
   ) {
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId },
-    });
-    const product = await this.productRepository.findOne({
-      where: { id: productId },
-      relations: ['creator'],
-    });
-    if (!product || !order) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
+    const order = await this.orderService.getOne(orderId);
+
+    const product = await this.productService.getOne(productId);
+
     const quantity = product.stock - data.quantity;
     if (quantity < 0) {
       throw new BadRequestException('Stock is empty');
     }
-    await this.productRepository.update({ id: productId }, { stock: quantity });
+
+    await this.productService.update(product.creator.id, productId, {
+      stock: quantity,
+    });
+
     const orderItem = await this.orderItemRepository.create({
       ...data,
       price: product.price,
@@ -109,10 +108,7 @@ export class OrderItemService {
       { status: updatedStatus },
     );
 
-    const order = await this.orderRepository.findOne({
-      where: { id: orderItem.order.id },
-      relations: ['order_items'],
-    });
+    const order = await this.orderService.getOne(orderItem.order.id);
 
     order.status = updatedStatus;
     order.order_items.forEach((x) => {
@@ -120,7 +116,8 @@ export class OrderItemService {
         order.status = currentStatus;
       }
     });
-    await this.orderRepository.save(order);
+    await this.orderService.update(order.id, order.order_user.id, order);
+    // await this.orderRepository.save(order);
 
     return `${currentStatus} changed to ${updatedStatus}`;
   }

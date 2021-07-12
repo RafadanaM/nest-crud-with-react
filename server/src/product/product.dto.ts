@@ -20,6 +20,21 @@ export class ProductDTO {
 
   @IsNumber()
   price: number;
+
+  @IsNumber()
+  stock: number;
+
+  @IsNumber()
+  weight: number;
+
+  @IsNumber()
+  length: number;
+
+  @IsNumber()
+  width: number;
+
+  @IsNumber()
+  height: number;
 }
 
 export class ProductResponseObject {

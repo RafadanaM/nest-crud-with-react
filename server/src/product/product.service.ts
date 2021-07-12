@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/user.entity';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { ProductDTO, ProductResponseObject } from './product.dto';
 import { ProductEntity } from './product.entity';
@@ -15,8 +16,7 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private productRepository: Repository<ProductEntity>,
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private readonly userService: UserService,
   ) {}
 
   private toResponseObject(product: ProductEntity): ProductResponseObject {
@@ -42,10 +42,7 @@ export class ProductService {
     userId: string,
     data: ProductDTO,
   ): Promise<ProductResponseObject> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
+    const user = await this.userService.getOneUser(userId);
     const product = await this.productRepository.create({
       ...data,
       creator: user,
@@ -63,6 +60,17 @@ export class ProductService {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
     return this.toResponseObject(product);
+  }
+
+  async getOne(id: string): Promise<ProductEntity> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['creator'],
+    });
+    if (!product) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+    return product;
   }
 
   async showAllByUser(id: string): Promise<any> {
@@ -113,14 +121,7 @@ export class ProductService {
     let message = '';
     let isAdd = true;
     const product = await this.productRepository.findOne({ where: { id } });
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['wishlist'],
-    });
-
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
+    const user = await this.userService.getOneUser(userId);
 
     if (!product) {
       throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
@@ -132,13 +133,13 @@ export class ProductService {
       ).length < 1
     ) {
       user.wishlist.push(product);
-      await this.userRepository.save(user);
+      await this.userService.save(user);
       message = 'product added to wishlist';
     } else {
       user.wishlist = user.wishlist.filter(
         (wishlistedProduct) => wishlistedProduct.id !== product.id,
       );
-      await this.userRepository.save(user);
+      await this.userService.save(user);
       isAdd = false;
       message = 'product removed from wishlist';
       // throw new HttpException('Idea AlreadyBookmarked', HttpStatus.BAD_REQUEST);
@@ -148,10 +149,7 @@ export class ProductService {
 
   async unbookmark(id: string, userId: string) {
     const product = await this.productRepository.findOne({ where: { id } });
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['wishlist'],
-    });
+    const user = await this.userService.getOneUser(userId);
     if (
       user.wishlist.filter(
         (bookedmarkedProduct) => bookedmarkedProduct.id === product.id,
@@ -160,7 +158,7 @@ export class ProductService {
       user.wishlist = user.wishlist.filter(
         (bookmarkedProduct) => bookmarkedProduct.id !== product.id,
       );
-      await this.userRepository.save(user);
+      await this.userService.save(user);
     } else {
       throw new HttpException('Idea AlreadyBookmarked', HttpStatus.BAD_REQUEST);
     }

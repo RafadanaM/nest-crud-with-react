@@ -47,7 +47,7 @@ export class OrderController {
     @User('userId') userId: string,
     @User('roles') role: Role,
   ) {
-    return this.orderService.getOne(orderId, userId, role);
+    return this.orderService.getOne(orderId);
   }
 
   @UseGuards(AuthGuard('jwt'))

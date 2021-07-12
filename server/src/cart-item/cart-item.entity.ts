@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class cartItemEntity {
+export class CartItemEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
 
   @CreateDateColumn() created: Date;

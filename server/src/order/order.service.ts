@@ -10,8 +10,10 @@ import { Status } from 'src/enums/status.enum';
 import { OrderItemEntity } from 'src/order-item/order-item.entity';
 import { buyDTO } from 'src/product/product.dto';
 import { ProductEntity } from 'src/product/product.entity';
+import { ProductService } from 'src/product/product.service';
 
 import { UserEntity } from 'src/user/user.entity';
+import { UserService } from 'src/user/user.service';
 import { Connection, Repository, Transaction } from 'typeorm';
 import { OrderDTO } from './order.dto';
 import { OrderEntity } from './order.entity';
@@ -21,12 +23,8 @@ export class OrderService {
   constructor(
     @InjectRepository(OrderEntity)
     private orderRepository: Repository<OrderEntity>,
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-    @InjectRepository(OrderItemEntity)
-    private orderItemRepository: Repository<OrderItemEntity>,
-    @InjectRepository(ProductEntity)
-    private productRepository: Repository<ProductEntity>,
+    private readonly userService: UserService,
+    private readonly productService: ProductService,
     private connection: Connection,
   ) {}
 
@@ -44,14 +42,12 @@ export class OrderService {
     return orders;
   }
 
-  async getOne(orderId: string, userId: string, role: Role) {
+  async getOne(orderId: string) {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: ['order_user', 'order_items'],
     });
-    if (role === Role.User) {
-      this.isOwned(order, userId);
-    }
+
     return order;
   }
 
@@ -81,14 +77,8 @@ export class OrderService {
   }
 
   async test(userId: string, data: buyDTO, productId: string) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    const product = await this.productRepository.findOne({
-      where: { id: productId },
-      relations: ['creator'],
-    });
-    if (!user || !product) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
+    const user = await this.userService.getOneUser(userId);
+    const product = await this.productService.getOne(productId);
 
     await this.connection.transaction(async (manager) => {
       const orderRepo = manager.getRepository<OrderEntity>('OrderEntity');
@@ -169,10 +159,7 @@ export class OrderService {
 
   //change this
   async create(userId: string, data: OrderDTO) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
+    const user = await this.userService.getOneUser(userId);
 
     const order = await this.orderRepository.create({
       ...data,
@@ -183,14 +170,7 @@ export class OrderService {
   }
 
   async update(orderId: string, userId: string, data: Partial<OrderDTO>) {
-    let order = await this.orderRepository.findOne({
-      where: { id: orderId },
-      relations: ['order_user'],
-    });
-
-    if (!order) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
+    let order = await this.getOne(orderId);
 
     this.isOwned(order, userId);
     await this.orderRepository.update({ id: orderId }, data);
@@ -204,28 +184,15 @@ export class OrderService {
   }
 
   async delete(orderId: string, userId: string) {
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId },
-      relations: ['order_user'],
-    });
+    const order = await this.getOne(orderId);
 
-    if (!order) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
     this.isOwned(order, userId);
     await this.orderRepository.delete({ id: orderId });
     return order;
   }
 
   async changeOrderStatus(orderId: string, userId: string, status: Status) {
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId },
-      relations: ['order_user', 'order_items'],
-    });
-
-    if (!order) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    }
+    const order = await this.getOne(orderId);
 
     this.isOwned(order, userId);
     const order_items = await Promise.all(

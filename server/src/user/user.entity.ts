@@ -56,7 +56,6 @@ export class UserEntity {
   @OneToOne((type) => OrderEntity, (order) => order.order_user, {
     cascade: true,
   })
-  @JoinColumn()
   cart: CartEntity;
 
   @BeforeInsert()
