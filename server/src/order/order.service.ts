@@ -169,11 +169,25 @@ export class OrderService {
     return order;
   }
 
-  async update(orderId: string, userId: string, data: Partial<OrderDTO>) {
+  async save(orderId: string, userId: string, data: Partial<OrderEntity>) {
     let order = await this.getOne(orderId);
 
     this.isOwned(order, userId);
-    await this.orderRepository.update({ id: orderId }, data);
+    await this.orderRepository.save(data);
+
+    order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['order_user', 'order_items'],
+    });
+
+    return order;
+  }
+
+  async update(orderId: string, userId: string, data: Partial<OrderEntity>) {
+    let order = await this.getOne(orderId);
+
+    this.isOwned(order, userId);
+    await this.orderRepository.update({ id: orderId }, { ...data });
 
     order = await this.orderRepository.findOne({
       where: { id: orderId },

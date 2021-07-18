@@ -4,6 +4,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
   UseGuards,
   UsePipes,
@@ -44,7 +45,7 @@ export class OrderItemController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('Seller')
   @UsePipes(ValidationPipe)
-  @Post(':id')
+  @Put(':id')
   confirmOrderItem(
     @Param('id', ParseUUIDPipe) orderItemId: string,
     @Query('action') action: OrderAction,

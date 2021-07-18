@@ -7,12 +7,10 @@ export async function getOrderItemByUser(filter: string | null): Promise<any> {
   return response.data;
 }
 
-export async function changeOrderStatus(
+export async function changeOrderItemStatus(
   id: string,
   action: string
 ): Promise<any> {
-  const response = await axiosInstance.post(
-    `order-item/${id}?action=${action}`
-  );
+  const response = await axiosInstance.put(`order-item/${id}?action=${action}`);
   return response.data;
 }

@@ -8,6 +8,7 @@ import {
   Param,
   ParseUUIDPipe,
   Res,
+  Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
@@ -42,7 +43,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('api/user/seller')
+  @Put('api/user/seller')
   addUserSeller(@User('userId') id: string) {
     return this.userService.updateSellerRole(id);
   }

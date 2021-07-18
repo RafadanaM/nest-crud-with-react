@@ -8,7 +8,10 @@ import { Box, Button, Grid, makeStyles, Typography } from "@material-ui/core";
 // } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router";
-import { changeOrderStatus, getOrderItemByUser } from "../../api/OrderItemAPI";
+import {
+  changeOrderItemStatus,
+  getOrderItemByUser,
+} from "../../api/OrderItemAPI";
 import axios from "../../axios/axios";
 import BackButton from "../../components/BackButton/BackButton";
 import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
@@ -127,7 +130,7 @@ const ManageOrder = () => {
         return null;
     }
 
-    changeOrderStatus(orderId, action)
+    changeOrderItemStatus(orderId, action)
       .then(() => {
         setOrderItems((prevState) =>
           prevState.filter(({ id }) => id !== orderId)

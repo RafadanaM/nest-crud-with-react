@@ -116,7 +116,7 @@ export class OrderItemService {
         order.status = currentStatus;
       }
     });
-    await this.orderService.update(order.id, order.order_user.id, order);
+    await this.orderService.save(order.id, order.order_user.id, order);
     // await this.orderRepository.save(order);
 
     return `${currentStatus} changed to ${updatedStatus}`;

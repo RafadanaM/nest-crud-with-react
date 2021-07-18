@@ -20,12 +20,9 @@ import { useAuth } from "../../auth/AuthContext";
 import BackButton from "../../components/BackButton/BackButton";
 import theme from "../../theme";
 
-import {
-  bookmarkProduct,
-  getProduct,
-  orderProduct,
-} from "../../api/ProductAPI";
+import { bookmarkProduct, getProduct } from "../../api/ProductAPI";
 import { getUserWishlist } from "../../api/UserAPI";
+import { orderProduct } from "../../api/OrderAPI";
 const useStyles = makeStyles({
   baseContainer: {
     display: "flex",

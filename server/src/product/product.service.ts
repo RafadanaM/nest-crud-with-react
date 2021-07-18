@@ -146,22 +146,4 @@ export class ProductService {
     }
     return { isAdd: isAdd, message: message };
   }
-
-  async unbookmark(id: string, userId: string) {
-    const product = await this.productRepository.findOne({ where: { id } });
-    const user = await this.userService.getOneUser(userId);
-    if (
-      user.wishlist.filter(
-        (bookedmarkedProduct) => bookedmarkedProduct.id === product.id,
-      ).length > 0
-    ) {
-      user.wishlist = user.wishlist.filter(
-        (bookmarkedProduct) => bookmarkedProduct.id !== product.id,
-      );
-      await this.userService.save(user);
-    } else {
-      throw new HttpException('Idea AlreadyBookmarked', HttpStatus.BAD_REQUEST);
-    }
-    return user.toResponseObject();
-  }
 }

@@ -25,10 +25,7 @@ import { ProductService } from './product.service';
 @Controller('api/product')
 export class ProductController {
   private logger = new Logger('ProductController');
-  constructor(
-    private productService: ProductService,
-    private orderService: OrderService,
-  ) {}
+  constructor(private productService: ProductService) {}
 
   @Get()
   getAllProduct() {
@@ -89,28 +86,18 @@ export class ProductController {
     return this.productService.bookmark(id, userId);
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('Buyer', 'Seller')
-  @Delete(':id/bookmark')
-  @UsePipes(ValidationPipe)
-  unbookmarkProduct(
-    @User('userId') userId: string,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
-    return this.productService.unbookmark(id, userId);
-  }
+  // //MOVE TO ORDER
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles('Buyer', 'Seller')
+  // @Post(':id/order')
+  // @UsePipes(ValidationPipe)
+  // async orderProduct(
+  //   @User('userId') userId: string,
+  //   @Param('id', ParseUUIDPipe) productId: string,
+  //   @Body() data: buyDTO,
+  // ) {
+  //   const test = await this.orderService.test(userId, data, productId);
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('Buyer', 'Seller')
-  @Post(':id/order')
-  @UsePipes(ValidationPipe)
-  async orderProduct(
-    @User('userId') userId: string,
-    @Param('id', ParseUUIDPipe) productId: string,
-    @Body() data: buyDTO,
-  ) {
-    const test = await this.orderService.test(userId, data, productId);
-
-    return { message: 'success' };
-  }
+  //   return { message: 'success' };
+  // }
 }

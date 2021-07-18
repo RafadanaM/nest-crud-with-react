@@ -14,6 +14,16 @@ export async function changeOrderStatus(
   id: string,
   status: string
 ): Promise<any> {
-  const response = await axiosInstance.post(`orders/${id}/${status}`);
+  const response = await axiosInstance.put(`orders/${id}/${status}`);
+  return response.data;
+}
+
+//add note and quantity later
+export async function orderProduct(id: string): Promise<any> {
+  const response = await axiosInstance.post(`/orders/product/${id}`, {
+    order: { note: `This is a note for product ${id}` },
+    item: { quantity: 2 },
+  });
+
   return response.data;
 }

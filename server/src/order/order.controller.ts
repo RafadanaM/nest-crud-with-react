@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
   UseGuards,
   UsePipes,
@@ -15,6 +17,7 @@ import { User } from 'src/decorator/user.decorator';
 import { Role } from 'src/enums/role.enum';
 import { Status } from 'src/enums/status.enum';
 import { RolesGuard } from 'src/helpers/roles.guard';
+import { buyDTO } from 'src/product/product.dto';
 import { OrderService } from './order.service';
 
 @Controller('api/orders')
@@ -51,7 +54,7 @@ export class OrderController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post(':id/pay')
+  @Put(':id/pay')
   payOrder(
     @Param('id', ParseUUIDPipe) orderId: string,
     @User('userId') userId: string,
@@ -64,7 +67,7 @@ export class OrderController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post(':id/received')
+  @Put(':id/received')
   confirmOrderReceived(
     @Param('id', ParseUUIDPipe) orderId: string,
     @User('userId') userId: string,
@@ -74,5 +77,19 @@ export class OrderController {
       userId,
       Status.Completed,
     );
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('Buyer', 'Seller')
+  @Post('product/:id')
+  @UsePipes(ValidationPipe)
+  async orderProduct(
+    @User('userId') userId: string,
+    @Param('id', ParseUUIDPipe) productId: string,
+    @Body() data: buyDTO,
+  ) {
+    const test = await this.orderService.test(userId, data, productId);
+
+    return { message: 'success' };
   }
 }
