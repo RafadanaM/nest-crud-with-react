@@ -10,7 +10,6 @@ import Wishlist from "../pages/Wishlist/Wishlist";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 import classes from "./Route.module.css";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OrderDetail from "../pages/OrderDetail/OrderDetail";
 //import UserProduct from "../pages/UserProduct/UserProduct";

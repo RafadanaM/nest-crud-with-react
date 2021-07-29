@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   CircularProgress,
@@ -5,8 +6,6 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import axios from "../../axios/axios";
 import { useParams } from "react-router-dom";
 import { OrderI } from "../../interfaces/interface";
 import { useHistory } from "react-router-dom";

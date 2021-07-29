@@ -11,6 +11,8 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: "auto",
+    marginBottom: "auto",
   },
 
   boxContainer: {

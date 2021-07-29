@@ -1,7 +1,6 @@
 import { Grid } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { getUserWishlist } from "../../api/UserAPI";
-import axios from "../../axios/axios";
 import BackButton from "../../components/BackButton/BackButton";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import { Product } from "../../interfaces/interface";

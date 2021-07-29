@@ -3,6 +3,9 @@ import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
 // A custom theme for this app
 let theme = createMuiTheme({
   palette: {
+    text: {
+      primary: "#fff",
+    },
     primary: {
       main: "#828282",
     },

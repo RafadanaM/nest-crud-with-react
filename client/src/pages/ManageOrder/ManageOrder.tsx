@@ -12,7 +12,7 @@ import {
   changeOrderItemStatus,
   getOrderItemByUser,
 } from "../../api/OrderItemAPI";
-import axios from "../../axios/axios";
+
 import BackButton from "../../components/BackButton/BackButton";
 import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
 

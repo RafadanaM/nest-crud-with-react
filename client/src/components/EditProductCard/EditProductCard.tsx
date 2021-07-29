@@ -9,9 +9,7 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { findByLabelText } from "@testing-library/react";
 import React from "react";
-import { Link } from "react-router-dom";
 import { Product } from "../../interfaces/interface";
 
 const useStyles = makeStyles((theme) => ({

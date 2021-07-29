@@ -1,4 +1,3 @@
-import axios from "../../axios/axios";
 import React, { useEffect, useState } from "react";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import { useParams } from "react-router-dom";
