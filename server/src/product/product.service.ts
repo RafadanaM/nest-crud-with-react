@@ -1,12 +1,12 @@
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from 'src/user/user.entity';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { Repository } from 'typeorm';
 import { ProductDTO, ProductResponseObject } from './product.dto';
 import { ProductEntity } from './product.entity';
@@ -20,20 +20,20 @@ export class ProductService {
   ) {}
 
   private toResponseObject(product: ProductEntity): ProductResponseObject {
-    return { ...product, creator: product.creator.toResponseObject() };
+    return {
+      ...product,
+      creator: this.userService.toResponseObject(product.creator),
+    };
   }
 
   private isOwned(product: ProductEntity, userId: string) {
     if (product.creator.id !== userId) {
-      throw new HttpException('Incorrect User', HttpStatus.UNAUTHORIZED);
+      throw new ForbiddenException();
     }
   }
 
   async showAll(): Promise<ProductResponseObject[]> {
-    const products = await this.productRepository.find({
-      relations: ['creator'],
-    });
-    console.log('Product ' + products);
+    const products = await this.productRepository.find({});
 
     return products.map((product) => this.toResponseObject(product));
   }
@@ -57,7 +57,7 @@ export class ProductService {
       relations: ['creator'],
     });
     if (!product) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return this.toResponseObject(product);
   }
@@ -68,7 +68,7 @@ export class ProductService {
       relations: ['creator'],
     });
     if (!product) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     return product;
   }
@@ -92,7 +92,7 @@ export class ProductService {
       relations: ['creator'],
     });
     if (!product) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     this.isOwned(product, userId);
     await this.productRepository.update({ id }, data);
@@ -110,7 +110,7 @@ export class ProductService {
     });
 
     if (!product) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
     this.isOwned(product, userId);
     await this.productRepository.delete({ id });
@@ -121,11 +121,11 @@ export class ProductService {
     let message = '';
     let isAdd = true;
     const product = await this.productRepository.findOne({ where: { id } });
-    const user = await this.userService.getOneUser(userId);
 
     if (!product) {
-      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException();
     }
+    const user = await this.userService.getOneUser(userId);
 
     if (
       user.wishlist.filter(

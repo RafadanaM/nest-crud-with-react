@@ -1,8 +1,8 @@
-import { Status } from 'src/enums/status.enum';
-import { OrderDTO } from 'src/order/order.dto';
-import { OrderEntity } from 'src/order/order.entity';
-import { ProductEntity } from 'src/product/product.entity';
-import { UserEntity } from 'src/user/user.entity';
+import { Status } from '../enums/status.enum';
+
+import { OrderEntity } from '../order/order.entity';
+import { ProductEntity } from '../product/product.entity';
+import { UserEntity } from '../user/user.entity';
 import {
   BeforeInsert,
   Column,

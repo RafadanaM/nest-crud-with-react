@@ -84,6 +84,6 @@ export class UserController {
   @Post('api/register')
   @UsePipes(ValidationPipe)
   register(@Body() data: UserDto) {
-    return this.userService.register(data);
+    return this.authService.register(data);
   }
 }

@@ -1,5 +1,5 @@
-import { CartItemEntity } from 'src/cart-item/cart-item.entity';
-import { UserEntity } from 'src/user/user.entity';
+import { CartItemEntity } from '../cart-item/cart-item.entity';
+import { UserEntity } from '../user/user.entity';
 import {
   CreateDateColumn,
   Entity,

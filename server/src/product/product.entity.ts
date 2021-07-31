@@ -1,14 +1,11 @@
-import { type } from 'node:os';
-import { CartItemEntity } from 'src/cart-item/cart-item.entity';
-import { CommentEntity } from 'src/comment/comment.entity';
-import { OrderItemEntity } from 'src/order-item/order-item.entity';
-import { UserEntity } from 'src/user/user.entity';
+import { CommentEntity } from '../comment/comment.entity';
+import { OrderItemEntity } from '../order-item/order-item.entity';
+import { CartItemEntity } from '../cart-item/cart-item.entity';
+import { UserEntity } from '../user/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,

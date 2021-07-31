@@ -1,6 +1,6 @@
-import { Status } from 'src/enums/status.enum';
-import { OrderItemEntity } from 'src/order-item/order-item.entity';
-import { UserEntity } from 'src/user/user.entity';
+import { Status } from '../enums/status.enum';
+import { OrderItemEntity } from '../order-item/order-item.entity';
+import { UserEntity } from '../user/user.entity';
 import {
   AfterLoad,
   BeforeInsert,

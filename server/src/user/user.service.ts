@@ -3,15 +3,13 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoleEntity } from 'src/role/role.entity';
-import { RoleService } from 'src/role/role.service';
+import { RoleService } from '../role/role.service';
 import { Connection, Repository } from 'typeorm';
-import { UserDto, UserResponseObject } from './user.dto';
+import { UserResponseObject } from './user.dto';
 import { UserEntity } from './user.entity';
 
 @Injectable()
@@ -19,10 +17,36 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    private connection: Connection,
     private readonly roleService: RoleService,
   ) {}
 
+  toResponseObject(user: UserEntity): UserResponseObject {
+    const { id, created, username, email, firstname, lastname } = user;
+
+    const responseObject: any = {
+      id,
+      created,
+      username,
+      email,
+      firstname,
+      lastname,
+    };
+    if (user.roles) {
+      const role = user.roles.map(({ name }) => name);
+
+      responseObject.roles = role;
+    }
+
+    if (user.products) {
+      responseObject.products = user.products;
+    }
+
+    if (user.wishlist) {
+      responseObject.bookmarks = user.wishlist;
+    }
+
+    return responseObject;
+  }
   async save(user: UserEntity) {
     return this.userRepository.save(user);
   }
@@ -31,7 +55,18 @@ export class UserService {
     const users = await this.userRepository.find({
       relations: ['products', 'wishlist', 'roles'],
     });
-    return users.map((user) => user.toResponseObject());
+    return users.map((user) => this.toResponseObject(user));
+  }
+
+  async getOneByEmailOrUsername(
+    username: string,
+    email: string,
+  ): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({
+      where: [{ username }, { email }],
+    });
+
+    return user;
   }
 
   async getOne(id: string): Promise<UserResponseObject> {
@@ -41,7 +76,7 @@ export class UserService {
     });
     console.log('PROFILE: ' + user.roles);
 
-    return user.toResponseObject();
+    return this.toResponseObject(user);
   }
 
   async getOneUser(id: string) {
@@ -70,7 +105,7 @@ export class UserService {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
 
-    return user.toResponseObject();
+    return this.toResponseObject(user);
   }
 
   async getUserWishlist(id: string): Promise<any[]> {
@@ -114,34 +149,34 @@ export class UserService {
   }
 
   //source: https://wanago.io/2020/10/26/api-nestjs-transactions-postgresql-typeorm/
-  async register(data: UserDto): Promise<UserResponseObject> {
-    const queryRunner = this.connection.createQueryRunner();
-    const { username, email } = data;
-    // let user = await this.userRepository.findOne({where: { email }})
-    let user = await this.userRepository.findOne({
-      where: [{ username }, { email }],
-    });
-    if (user) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    }
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      //this may cause an error according to the source
-      const role = await this.roleService.getOneRole('Buyer');
-      const userData = { ...data, roles: [role] };
-      user = await queryRunner.manager.create(UserEntity, userData);
-      await queryRunner.manager.save(user);
-      await queryRunner.commitTransaction();
-      return user.toResponseObject();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException('Error Registering');
-    } finally {
-      await queryRunner.release();
-    }
+  // async register(data: UserDto): Promise<UserResponseObject> {
+  //   const queryRunner = this.connection.createQueryRunner();
+  //   const { username, email } = data;
+  //   // let user = await this.userRepository.findOne({where: { email }})
+  //   let user = await this.userRepository.findOne({
+  //     where: [{ username }, { email }],
+  //   });
+  //   if (user) {
+  //     throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+  //   }
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+  //   try {
+  //     //this may cause an error according to the source
+  //     const role = await this.roleService.getOneRole('Buyer');
+  //     const userData = { ...data, roles: [role] };
+  //     user = await queryRunner.manager.create(UserEntity, userData);
+  //     await queryRunner.manager.save(user);
+  //     await queryRunner.commitTransaction();
+  //     return this.toResponseObject(user);
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     throw new InternalServerErrorException('Error Registering');
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
 
-    // user = this.userRepository.create(data);
-    // await this.userRepository.save(user);
-  }
+  // user = this.userRepository.create(data);
+  // await this.userRepository.save(user);
+  // }
 }

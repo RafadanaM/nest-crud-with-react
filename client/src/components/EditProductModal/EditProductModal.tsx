@@ -10,9 +10,13 @@ import {
   InputAdornment,
   makeStyles,
   TextField,
-  Typography,
 } from "@material-ui/core";
-import { Clear } from "@material-ui/icons";
+import {
+  AddOutlined,
+  Clear,
+  EditOutlined,
+  RemoveOutlined,
+} from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { Product } from "../../interfaces/interface";
 
@@ -31,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
   dividers: {
     borderTop: `1px solid ${theme.palette.primary.main}`,
     borderBottom: `1px solid ${theme.palette.primary.main}`,
+  },
+  editButton: {
+    float: "right",
   },
   input: {
     "& .MuiFormLabel-root.Mui-disabled": {
@@ -71,6 +78,7 @@ interface EditProductModalI {
 const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
   const css = useStyles();
   const [currentProduct, setCurrentProduct] = useState<Product>();
+  const [disabledEdit, setDisableEdit] = useState(true);
   useEffect(() => {
     setCurrentProduct(product);
   }, [product]);
@@ -99,8 +107,17 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
           </Grid>
 
           <DialogContent dividers classes={{ dividers: css.dividers }}>
+            <Button
+              className={css.editButton}
+              variant="contained"
+              color="secondary"
+              onClick={() => setDisableEdit(!disabledEdit)}
+              startIcon={<EditOutlined />}
+            >
+              Edit
+            </Button>
             <TextField
-              disabled
+              disabled={disabledEdit}
               id="name"
               label="Product Name"
               InputLabelProps={{
@@ -117,7 +134,7 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
               classes={{ root: css.input }}
             />
             <TextField
-              disabled
+              disabled={disabledEdit}
               id="price"
               type="number"
               label="Price"
@@ -144,11 +161,11 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
                 ),
               }}
             />
-            <Grid container justify="flex-start" spacing={1}>
+            <Grid container spacing={1}>
               <Grid item xs>
                 <TextField
                   fullWidth
-                  disabled
+                  disabled={disabledEdit}
                   id="width"
                   type="number"
                   label="Width"
@@ -179,7 +196,7 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
               <Grid item xs>
                 <TextField
                   fullWidth
-                  disabled
+                  disabled={disabledEdit}
                   id="length"
                   type="number"
                   label="Length"
@@ -210,7 +227,7 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
               <Grid item xs>
                 <TextField
                   fullWidth
-                  disabled
+                  disabled={disabledEdit}
                   id="height"
                   type="number"
                   label="Height"
@@ -240,7 +257,7 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
               </Grid>
             </Grid>
             <TextField
-              disabled
+              disabled={disabledEdit}
               id="weight"
               type="number"
               label="Weight"
@@ -267,36 +284,75 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
                 ),
               }}
             />
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <TextField
+                  disabled={disabledEdit}
+                  id="currentStock"
+                  type="number"
+                  label="Stock"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{ min: 0, max: 999 }}
+                  value={currentProduct.stock}
+                  className={css.field}
+                  fullWidth
+                  margin="normal"
+                  classes={{ root: css.input }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment
+                        position="end"
+                        classes={{ root: css.numberInput }}
+                      >
+                        Unit
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={8} direction="row-reverse">
+                <TextField
+                  disabled={disabledEdit}
+                  id="stock"
+                  type="number"
+                  label="Edit Stock"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: currentProduct.stock,
+                    max: 999,
+
+                    style: { textAlign: "center" },
+                  }}
+                  value={0}
+                  className={css.field}
+                  margin="normal"
+                  classes={{ root: css.input }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton color="secondary" disabled={disabledEdit}>
+                          <RemoveOutlined />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton color="secondary" disabled={disabledEdit}>
+                          <AddOutlined />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+            </Grid>
+
             <TextField
-              disabled
-              id="stock"
-              type="number"
-              label="Stock"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{ min: 0, max: 999 }}
-              value={currentProduct.stock}
-              className={css.field}
-              // onChange={handleChange("firstName")}
-              //helperText={registerValueError.firstName.msg}
-              //error={registerValueError.firstName.value}
-              fullWidth
-              margin="normal"
-              classes={{ root: css.input }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    classes={{ root: css.numberInput }}
-                  >
-                    Unit
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              disabled
+              disabled={disabledEdit}
               id="description"
               label="Description"
               InputLabelProps={{
