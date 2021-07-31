@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { users } from '../user/user.mock';
+import { users } from '../../user/user.mock';
 import { Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
-import { ProductDTO } from './product.dto';
+import { UserService } from '../../user/user.service';
+import { ProductDTO } from '../product.dto';
 
-import { ProductEntity } from './product.entity';
+import { ProductEntity } from '../product.entity';
 import { productDataMock, products } from './product.mock';
-import { ProductService } from './product.service';
+import { ProductService } from '../product.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { UserEntity } from 'src/user/user.entity';
 describe('ProductService', () => {

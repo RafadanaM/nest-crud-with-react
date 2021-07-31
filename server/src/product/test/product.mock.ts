@@ -1,5 +1,5 @@
-import { users } from '../user/user.mock';
-import { ProductEntity } from './product.entity';
+import { users } from '../../user/user.mock';
+import { ProductEntity } from '../product.entity';
 
 export const products: ProductEntity[] = [
   {
