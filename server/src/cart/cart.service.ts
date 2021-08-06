@@ -36,7 +36,7 @@ export class CartService {
       throw new BadRequestException('User already has a cart');
     }
 
-    const user = await this.userService.getOneUser(userId);
+    const user = await this.userService.getOne(userId);
     console.log(user);
 
     const newCart = await this.cartRepository.create({ cart_user: user });

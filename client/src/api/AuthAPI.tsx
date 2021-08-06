@@ -31,6 +31,6 @@ export async function registerUser(
     firstname,
     lastname,
   };
-  const response = await axiosInstance.post("logout", registerObj);
+  const response = await axiosInstance.post("register", registerObj);
   return response.data;
 }

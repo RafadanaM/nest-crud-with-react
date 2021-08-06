@@ -33,7 +33,9 @@ export class ProductService {
   }
 
   async showAll(): Promise<ProductResponseObject[]> {
-    const products = await this.productRepository.find({});
+    const products = await this.productRepository.find({
+      relations: ['creator'],
+    });
 
     return products.map((product) => this.toResponseObject(product));
   }
@@ -42,7 +44,7 @@ export class ProductService {
     userId: string,
     data: ProductDTO,
   ): Promise<ProductResponseObject> {
-    const user = await this.userService.getOneUser(userId);
+    const user = await this.userService.getOne(userId);
     const product = await this.productRepository.create({
       ...data,
       creator: user,
@@ -125,7 +127,7 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException();
     }
-    const user = await this.userService.getOneUser(userId);
+    const user = await this.userService.getOne(userId);
 
     if (
       user.wishlist.filter(

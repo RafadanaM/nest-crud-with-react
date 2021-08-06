@@ -1,8 +1,4 @@
-import { CartEntity } from 'src/cart/cart.entity';
-import { OrderEntity } from 'src/order/order.entity';
-import { ProductEntity } from 'src/product/product.entity';
-import { RoleEntity } from 'src/role/role.entity';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../user.entity';
 
 export const users: UserEntity[] = [
   {

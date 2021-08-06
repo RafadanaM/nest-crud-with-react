@@ -66,7 +66,7 @@ const AuthProvider = ({ children }: IProps) => {
         console.log(error.response.data);
         setRegisterError({
           value: true,
-          msg: error.response?.data.message,
+          msg: "error",
         });
       })
       .finally(() => setLoading(false));

@@ -19,13 +19,11 @@ import {
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { Product } from "../../interfaces/interface";
+import { EditTextField } from "../EditTextField/EditTextField";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
     color: theme.palette.primary.contrastText,
-  },
-  field: {
-    color: "white",
   },
   numberInput: {
     "& .MuiTypography-root": {
@@ -38,35 +36,6 @@ const useStyles = makeStyles((theme) => ({
   },
   editButton: {
     float: "right",
-  },
-  input: {
-    "& .MuiFormLabel-root.Mui-disabled": {
-      color: "white",
-    },
-    "& .MuiInputBase-root.Mui-disabled": {
-      color: "white",
-    },
-    "& .MuiInputBase-root": {
-      color: "white",
-    },
-    "& label.Mui-focused": {
-      color: "white",
-    },
-    "& .MuiInput-underline": {
-      borderBottomColor: theme.palette.secondary.main,
-    },
-    "& .MuiInput-underline:before": {
-      borderBottomColor: theme.palette.secondary.main,
-    },
-    "& .MuiInput-underline.Mui-disabled:before": {
-      borderBottom: `1px solid ${theme.palette.primary.main}`,
-    },
-    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-      borderBottomColor: theme.palette.secondary.main,
-    },
-    "& .MuiInput-underline:after": {
-      borderBottomColor: theme.palette.secondary.main,
-    },
   },
 }));
 
@@ -116,40 +85,26 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
             >
               Edit
             </Button>
-            <TextField
+            <EditTextField
               disabled={disabledEdit}
               id="name"
               label="Product Name"
-              InputLabelProps={{
-                shrink: true,
-              }}
               inputProps={{ maxLength: 80, minLength: 0 }}
               value={currentProduct.name}
-              className={css.field}
               // onChange={handleChange("firstName")}
               //helperText={registerValueError.firstName.msg}
               //error={registerValueError.firstName.value}
-              fullWidth
-              margin="normal"
-              classes={{ root: css.input }}
             />
-            <TextField
+            <EditTextField
               disabled={disabledEdit}
               id="price"
               type="number"
               label="Price"
-              InputLabelProps={{
-                shrink: true,
-              }}
               inputProps={{ min: 100 }}
               value={currentProduct.price}
-              className={css.field}
               // onChange={handleChange("firstName")}
               //helperText={registerValueError.firstName.msg}
               //error={registerValueError.firstName.value}
-              fullWidth
-              margin="normal"
-              classes={{ root: css.input }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment
@@ -163,24 +118,16 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
             />
             <Grid container spacing={1}>
               <Grid item xs>
-                <TextField
-                  fullWidth
+                <EditTextField
                   disabled={disabledEdit}
                   id="width"
                   type="number"
                   label="Width"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                   inputProps={{ min: 0, max: 100 }}
                   value={currentProduct.width}
-                  className={css.field}
                   // onChange={handleChange("firstName")}
                   //helperText={registerValueError.firstName.msg}
                   //error={registerValueError.firstName.value}
-
-                  margin="normal"
-                  classes={{ root: css.input }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
@@ -194,24 +141,16 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
                 />
               </Grid>
               <Grid item xs>
-                <TextField
-                  fullWidth
+                <EditTextField
                   disabled={disabledEdit}
                   id="length"
                   type="number"
                   label="Length"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                   inputProps={{ min: 0, max: 100 }}
                   value={currentProduct.length}
-                  className={css.field}
                   // onChange={handleChange("firstName")}
                   //helperText={registerValueError.firstName.msg}
                   //error={registerValueError.firstName.value}
-
-                  margin="normal"
-                  classes={{ root: css.input }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
@@ -225,24 +164,16 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
                 />
               </Grid>
               <Grid item xs>
-                <TextField
-                  fullWidth
+                <EditTextField
                   disabled={disabledEdit}
                   id="height"
                   type="number"
                   label="Height"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                   inputProps={{ min: 0, max: 100 }}
                   value={currentProduct.height}
-                  className={css.field}
                   // onChange={handleChange("firstName")}
                   //helperText={registerValueError.firstName.msg}
                   //error={registerValueError.firstName.value}
-
-                  margin="normal"
-                  classes={{ root: css.input }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
@@ -256,23 +187,16 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
                 />
               </Grid>
             </Grid>
-            <TextField
+            <EditTextField
               disabled={disabledEdit}
               id="weight"
               type="number"
               label="Weight"
-              InputLabelProps={{
-                shrink: true,
-              }}
               inputProps={{ min: 0, max: 100 }}
               value={currentProduct.weight}
-              className={css.field}
               // onChange={handleChange("firstName")}
               //helperText={registerValueError.firstName.msg}
               //error={registerValueError.firstName.value}
-              fullWidth
-              margin="normal"
-              classes={{ root: css.input }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment
@@ -286,20 +210,13 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
             />
             <Grid container spacing={2}>
               <Grid item xs={4}>
-                <TextField
+                <EditTextField
                   disabled={disabledEdit}
                   id="currentStock"
                   type="number"
                   label="Stock"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                   inputProps={{ min: 0, max: 999 }}
                   value={currentProduct.stock}
-                  className={css.field}
-                  fullWidth
-                  margin="normal"
-                  classes={{ root: css.input }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
@@ -313,24 +230,17 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
                 />
               </Grid>
               <Grid item xs={8} direction="row-reverse">
-                <TextField
+                <EditTextField
                   disabled={disabledEdit}
                   id="stock"
                   type="number"
                   label="Edit Stock"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                   inputProps={{
                     min: currentProduct.stock,
                     max: 999,
-
                     style: { textAlign: "center" },
                   }}
                   value={0}
-                  className={css.field}
-                  margin="normal"
-                  classes={{ root: css.input }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -351,24 +261,18 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
               </Grid>
             </Grid>
 
-            <TextField
+            <EditTextField
               disabled={disabledEdit}
               id="description"
               label="Description"
-              InputLabelProps={{
-                shrink: true,
-              }}
               inputProps={{ maxLength: 80, minLength: 0 }}
               value={currentProduct.description}
-              className={css.field}
               // onChange={handleChange("firstName")}
               //helperText={registerValueError.firstName.msg}
               //error={registerValueError.firstName.value}
               fullWidth
               multiline
               rows={5}
-              margin="normal"
-              classes={{ root: css.input }}
             />
           </DialogContent>
           <DialogActions>

@@ -19,6 +19,9 @@ export const WithAxios = ({ children }: WithAxiosI) => {
       (error) => {
         const res = error.response;
         // console.log(res)
+        if (!res?.status) {
+          return Promise.reject(error);
+        }
 
         switch (res.status) {
           case 401:

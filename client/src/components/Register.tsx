@@ -184,6 +184,7 @@ const Register = () => {
   const registerHandler = (event: any) => {
     event.preventDefault();
     setDisabled(true);
+    console.log(registerValue);
     register(
       registerValue.username,
       registerValue.password,

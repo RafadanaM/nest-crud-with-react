@@ -77,7 +77,7 @@ export class OrderService {
   }
 
   async test(userId: string, data: buyDTO, productId: string) {
-    const user = await this.userService.getOneUser(userId);
+    const user = await this.userService.getOne(userId);
     const product = await this.productService.getOne(productId);
 
     await this.connection.transaction(async (manager) => {
@@ -159,7 +159,7 @@ export class OrderService {
 
   //change this
   async create(userId: string, data: OrderDTO) {
-    const user = await this.userService.getOneUser(userId);
+    const user = await this.userService.getOne(userId);
 
     const order = await this.orderRepository.create({
       ...data,

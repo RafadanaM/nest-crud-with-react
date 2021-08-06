@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoleService } from '../role/role.service';
-import { Connection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserResponseObject } from './user.dto';
 import { UserEntity } from './user.entity';
 
@@ -21,6 +21,7 @@ export class UserService {
   ) {}
 
   toResponseObject(user: UserEntity): UserResponseObject {
+    console.log(user);
     const { id, created, username, email, firstname, lastname } = user;
 
     const responseObject: any = {
@@ -44,7 +45,7 @@ export class UserService {
     if (user.wishlist) {
       responseObject.bookmarks = user.wishlist;
     }
-
+    console.log(responseObject);
     return responseObject;
   }
   async save(user: UserEntity) {
@@ -65,21 +66,10 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: [{ username }, { email }],
     });
-
     return user;
   }
 
-  async getOne(id: string): Promise<UserResponseObject> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: ['products', 'wishlist', 'roles'],
-    });
-    console.log('PROFILE: ' + user.roles);
-
-    return this.toResponseObject(user);
-  }
-
-  async getOneUser(id: string) {
+  async getOne(id: string, asRO: boolean = false) {
     const user = await this.userRepository.findOne({
       where: { id },
       relations: ['products', 'wishlist', 'roles'],
@@ -87,20 +77,18 @@ export class UserService {
     if (!user) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
+    if (asRO) {
+      this.toResponseObject(user);
+    }
     return user;
   }
 
   async getUserInfo(id: string): Promise<UserResponseObject> {
-    const user = await this.userRepository
-      .createQueryBuilder('users')
-      .where('users.id = :userId', { userId: id })
-      .addSelect(['roles.name'])
-      .leftJoin('users.roles', 'roles')
-      .getOne();
-
-    // const user = await this.userRepository.findOne({
-    //   where: { id }, relations: ['roles']
-    // });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['roles'],
+    });
+    console.log(user);
     if (!user) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
@@ -117,7 +105,7 @@ export class UserService {
     return user.wishlist;
   }
 
-  async findOne(username: string): Promise<UserEntity> {
+  async getOneWithPassword(username: string): Promise<UserEntity> {
     const user = await this.userRepository
       .createQueryBuilder('users')
       .where('users.username = :username', { username: username })
@@ -125,8 +113,6 @@ export class UserService {
       .leftJoin('users.roles', 'roles')
       .getOne();
     if (!user) {
-      console.log('USER SERVICE NOT USER');
-
       throw new UnauthorizedException('Invalid username/password');
     }
 

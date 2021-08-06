@@ -13,13 +13,8 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
-import { Roles } from 'src/decorator/roles.decorator';
 import { User } from 'src/decorator/user.decorator';
-import { Role } from 'src/enums/role.enum';
-import { RolesGuard } from 'src/helpers/roles.guard';
 import { ValidationPipe } from 'src/helpers/validation.pipe';
-import { OrderItemService } from 'src/order-item/order-item.service';
-import { OrderService } from 'src/order/order.service';
 import { UserDto, UserResponseObject } from './user.dto';
 import { UserService } from './user.service';
 
@@ -50,8 +45,9 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('api/user/:id')
-  getUser(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.getOne(id);
+  async getUser(@Param('id', ParseUUIDPipe) id: string) {
+    const user = await this.userService.getOne(id, true);
+    return this.userService.toResponseObject(user);
   }
 
   @UseGuards(AuthGuard('jwt'))
