@@ -119,8 +119,7 @@ const EditProductCard = ({ product, onOpenModal }: EditProductCardI) => {
           </ul>
           <Typography variant="subtitle2">Description:</Typography>
           <Typography className={css.text} noWrap>
-            ajhsbdadbajhbdajhbdhjsabdhsabdhjsabdjhsabdas
-            ahbdajsdbsahjbdsahdbsahjd sahbdsajbdsahj bdsahdbjsahdsahjd b
+            {product.description}
           </Typography>
         </Box>
       </CardContent>

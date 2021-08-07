@@ -17,71 +17,66 @@ import ManageOrder from "../pages/ManageOrder/ManageOrder";
 import Cart from "../pages/Cart/Cart";
 import Authentication from "../pages/Authentication/Authentication";
 import { ToastProvider } from "../components/Toast/ToastContext";
-import { WithAxios } from "../axios/WithAxios";
 import ManageProduct from "../pages/ManageProduct/ManageProduct";
 
 const Router = () => {
   return (
     <BrowserRouter>
       <div className={classes.base}>
-        <WithAxios>
-          {/* <ToastContainer /> */}
-          <Navbar />
-          <ToastProvider>
-            <Switch>
-              <PublicRoute exact path="/" component={Home} />
-              <PublicRoute path="/login" component={Authentication} />
-              <Route
-                path="/profile"
-                render={({ match: { path } }) => (
-                  <Switch>
-                    <ProtectedRoute
-                      path={`${path}`}
-                      component={Profile}
-                      exact
-                    />
-                    <ProtectedRoute path={`${path}/cart`} component={Cart} />
-                    <ProtectedRoute
-                      path={`${path}/wishlist`}
-                      component={Wishlist}
-                    />
-                    <ProtectedRoute
-                      path={`${path}/order-manage`}
-                      component={ManageOrder}
-                    />
-                    <ProtectedRoute
-                      path={`${path}/product-manage`}
-                      component={ManageProduct}
-                    />
+        {/* <WithAxios> */}
+        {/* <ToastContainer /> */}
+        <Navbar />
+        <ToastProvider>
+          <Switch>
+            <PublicRoute exact path="/" component={Home} />
+            <PublicRoute path="/login" component={Authentication} />
+            <Route
+              path="/profile"
+              render={({ match: { path } }) => (
+                <Switch>
+                  <ProtectedRoute path={`${path}`} component={Profile} exact />
+                  <ProtectedRoute path={`${path}/cart`} component={Cart} />
+                  <ProtectedRoute
+                    path={`${path}/wishlist`}
+                    component={Wishlist}
+                  />
+                  <ProtectedRoute
+                    path={`${path}/order-manage`}
+                    component={ManageOrder}
+                  />
+                  <ProtectedRoute
+                    path={`${path}/product-manage`}
+                    component={ManageProduct}
+                  />
 
-                    <Route
-                      path={`${path}/order`}
-                      render={({ match: { path } }) => (
-                        <>
-                          <ProtectedRoute
-                            path={`${path}`}
-                            component={Order}
-                            exact
-                          />
-                          <ProtectedRoute
-                            path={`${path}/:id`}
-                            component={OrderDetail}
-                          />
-                        </>
-                      )}
-                    />
-                    <Redirect to="/404" />
-                  </Switch>
-                )}
-              />
-              {/* <ProtectedRoute path="/profile/wishlist" component={Wishlist} />
+                  <Route
+                    path={`${path}/order`}
+                    render={({ match: { path } }) => (
+                      <>
+                        <ProtectedRoute
+                          path={`${path}`}
+                          component={Order}
+                          exact
+                        />
+                        <ProtectedRoute
+                          path={`${path}/:id`}
+                          component={OrderDetail}
+                        />
+                      </>
+                    )}
+                  />
+                  <Redirect to="/404" />
+                </Switch>
+              )}
+            />
+            {/* <ProtectedRoute path="/profile/wishlist" component={Wishlist} />
           <ProtectedRoute path="/profile/orders" component={Order} /> */}
-              <PublicRoute path="/product/:id" component={ProductDetail} />
-              <PublicRoute path="/404" component={NotFound} />
-              <Redirect to="/404" />
-            </Switch>
-          </ToastProvider>
-        </WithAxios>
+            <PublicRoute path="/product/:id" component={ProductDetail} />
+            <PublicRoute path="/404" component={NotFound} />
+            <Redirect to="/404" />
+          </Switch>
+        </ToastProvider>
+        {/* </WithAxios> */}
       </div>
     </BrowserRouter>
   );

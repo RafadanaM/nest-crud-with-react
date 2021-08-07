@@ -1,4 +1,5 @@
 import axiosInstance from "../axios/axios";
+import { ProductUpdate } from "../interfaces/interface";
 
 export async function getProducts(): Promise<any> {
   const response = await axiosInstance.get("/product");
@@ -17,5 +18,15 @@ export async function getProductsByUser(): Promise<any> {
 
 export async function bookmarkProduct(id: string): Promise<any> {
   const response = await axiosInstance.post(`/product/${id}/bookmark`);
+  return response.data;
+}
+
+export async function updateProduct(
+  product: ProductUpdate,
+  productId: string
+): Promise<any> {
+  const response = await axiosInstance.put(`/product/${productId}`, {
+    ...product,
+  });
   return response.data;
 }

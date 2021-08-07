@@ -61,6 +61,8 @@ export class ProductController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: Partial<ProductDTO>,
   ) {
+    console.log('ID: ' + id);
+    console.log(data);
     return this.productService.update(userId, id, data);
   }
 

@@ -43,6 +43,24 @@ export interface Product {
   height: string;
 }
 
+export interface ProductUpdate {
+  name: string;
+
+  description: string;
+
+  price: number;
+
+  stock: number;
+
+  weight: number;
+
+  length: number;
+
+  width: number;
+
+  height: number;
+}
+
 export interface OrderI {
   id: string;
   created: Date;

@@ -24,18 +24,14 @@ const ManageProduct = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product>();
 
   const handleOpenModal = (productId: string) => {
-    const productsToFilter = [...products];
-    setSelectedProduct(
-      productsToFilter.find((product) => product.id === productId)
-    );
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
+    getProductsByUser().then((data) => setProducts(data));
   };
 
   useEffect(() => {
@@ -51,17 +47,17 @@ const ManageProduct = () => {
       <h1>Product Management</h1>
       {products && (
         <>
-          <EditProductModal
-            open={openModal}
-            onClose={handleCloseModal}
-            product={selectedProduct}
-          />
           <Grid container>
             {products.map((product) => (
               <Grid item key={product.id} xs={12} sm={6} md={3}>
                 <EditProductCard
                   product={product}
                   onOpenModal={() => handleOpenModal(product.id)}
+                />
+                <EditProductModal
+                  open={openModal}
+                  onClose={handleCloseModal}
+                  product={product}
                 />
               </Grid>
             ))}

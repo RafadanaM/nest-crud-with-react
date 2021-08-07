@@ -90,16 +90,20 @@ export class ProductService {
     data: Partial<ProductDTO>,
   ): Promise<ProductResponseObject> {
     let product = await this.productRepository.findOne({
-      where: id,
+      where: { id },
       relations: ['creator'],
     });
     if (!product) {
       throw new NotFoundException();
     }
     this.isOwned(product, userId);
-    await this.productRepository.update({ id }, data);
+    const updatedData: Partial<ProductDTO> = {
+      ...data,
+      stock: product.stock + data.stock,
+    };
+    await this.productRepository.update({ id }, { ...updatedData });
     product = await this.productRepository.findOne({
-      where: id,
+      where: { id },
       relations: ['creator'],
     });
     return this.toResponseObject(product);
