@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import { useParams } from "react-router-dom";
 import { Product } from "../../interfaces/interface";
@@ -24,23 +25,22 @@ import { getUserWishlist } from "../../api/UserAPI";
 import { orderProduct } from "../../api/OrderAPI";
 const useStyles = makeStyles({
   baseContainer: {
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     flex: "1",
-    marginLeft: "7rem",
-    marginRight: "7rem",
-    padding: "1rem",
+    padding: "8px",
     marginTop: "20px",
   },
   paper: {
     height: "100%",
     width: "100%",
-    padding: "0.5rem",
+    padding: "8px",
   },
   paper2: {
     height: "100%",
     width: "100%",
-    padding: "0.5rem",
+    padding: "8px",
     display: "flex",
     flexDirection: "column",
   },
@@ -49,7 +49,7 @@ const useStyles = makeStyles({
     fontWeight: "bold",
   },
   topContainer: {
-    margin: "0.5rem",
+    margin: "8px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -57,7 +57,7 @@ const useStyles = makeStyles({
   list: {
     padding: 0,
     color: theme.palette.primary.contrastText,
-    margin: "0.25rem",
+    margin: "8px",
     "& li": {
       listStyleType: "none",
     },
@@ -86,13 +86,11 @@ const useStyles = makeStyles({
   amountContainer: {
     display: "flex",
   },
-
   wishlist: {
     marginLeft: "auto",
     margin: "0",
     padding: "0",
   },
-
   iconWishlist: {
     transition: "all 500ms ease",
   },
@@ -101,6 +99,7 @@ const useStyles = makeStyles({
   },
 });
 const ProductDetail = () => {
+  const history = useHistory();
   const css = useStyles();
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<null | Product>(null);
@@ -139,7 +138,7 @@ const ProductDetail = () => {
         if (currentUser) getWishlist();
         setProduct(data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => history.push("/404", { message: "Product Not Found" }));
 
     // eslint-disable-next-line
   }, [id]);
@@ -148,15 +147,16 @@ const ProductDetail = () => {
       <Grid item xs={12}>
         <BackButton title="Home" />
       </Grid>
+      <Grid container></Grid>
       <Paper className={css.baseContainer}>
         <Grid container spacing={1}>
-          <Grid item xs={5}>
+          <Grid item xs={12} md={5}>
             <Paper className={css.paper} elevation={1}>
               <ImageCarousel />
             </Paper>
           </Grid>
 
-          <Grid container item direction="column" xs={7}>
+          <Grid container item direction="column" xs={12} md={7}>
             <Paper elevation={1} className={css.paper2}>
               <Box className={css.topContainer}>
                 <Typography className={css.title}>{product.name}</Typography>

@@ -38,7 +38,7 @@ const Home = () => {
   const renderProduct = () => {
     if (products.length > 0) {
       return products.map((product) => (
-        <Grid item md={4} lg={3} key={product.id}>
+        <Grid item key={product.id}>
           <ProductCard product={product} />
         </Grid>
       ));
@@ -50,7 +50,6 @@ const Home = () => {
   return (
     <Paper elevation={0} className={css.baseContainer}>
       <Grid container alignItems="center" justify="flex-start" spacing={3}>
-        <Button onClick={open}>CLICK</Button>
         {renderProduct()}
         {/* <Grid item md={4} lg={3} key={products[0].id}>
           <ProductCard product={products[0]} />

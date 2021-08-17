@@ -43,21 +43,14 @@ export interface Product {
   height: string;
 }
 
-export interface ProductUpdate {
+export interface ProductDTO {
   name: string;
-
   description: string;
-
   price: number;
-
   stock: number;
-
   weight: number;
-
   length: number;
-
   width: number;
-
   height: number;
 }
 

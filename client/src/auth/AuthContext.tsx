@@ -86,7 +86,7 @@ const AuthProvider = ({ children }: IProps) => {
           setLoginError(false);
         })
         .catch((error) => {
-          console.log(error.response.data);
+          console.log(error);
           setLoginMessage(error.response.data.message.message);
           setLoginError(true);
         })

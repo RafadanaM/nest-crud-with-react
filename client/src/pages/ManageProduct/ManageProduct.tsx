@@ -1,4 +1,5 @@
-import { Grid, makeStyles } from "@material-ui/core";
+import { Fab, Grid, makeStyles } from "@material-ui/core";
+import { AddOutlined } from "@material-ui/icons";
 
 import React, { useEffect, useState } from "react";
 import { getProductsByUser } from "../../api/ProductAPI";
@@ -18,14 +19,24 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: theme.palette.secondary.main,
   },
+
+  fab: {
+    position: "fixed",
+    bottom: "50px",
+    right: "50px",
+    cursor: "pointer",
+    zIndex: 50,
+  },
 }));
 const ManageProduct = () => {
   const css = useStyles();
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [choosenProduct, setChoosenProduct] = useState<Product | null>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const handleOpenModal = (productId: string) => {
+  const handleOpenModal = (product: Product | null) => {
+    setChoosenProduct(product);
     setOpenModal(true);
   };
 
@@ -39,7 +50,7 @@ const ManageProduct = () => {
   }, []);
 
   return (
-    <div className={css.baseContainer}>
+    <>
       <Grid item xs={12}>
         <BackButton title="Profile" />
       </Grid>
@@ -48,23 +59,30 @@ const ManageProduct = () => {
       {products && (
         <>
           <Grid container>
+            <EditProductModal
+              open={openModal}
+              onClose={handleCloseModal}
+              product={choosenProduct}
+            />
             {products.map((product) => (
               <Grid item key={product.id} xs={12} sm={6} md={3}>
                 <EditProductCard
                   product={product}
-                  onOpenModal={() => handleOpenModal(product.id)}
-                />
-                <EditProductModal
-                  open={openModal}
-                  onClose={handleCloseModal}
-                  product={product}
+                  onOpenModal={() => handleOpenModal(product)}
                 />
               </Grid>
             ))}
           </Grid>
+          <Fab
+            color="secondary"
+            className={css.fab}
+            onClick={() => handleOpenModal(null)}
+          >
+            <AddOutlined />
+          </Fab>
         </>
       )}
-    </div>
+    </>
   );
 };
 

@@ -18,8 +18,8 @@ import {
   RemoveOutlined,
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import { updateProduct } from "../../api/ProductAPI";
-import { Product, ProductUpdate } from "../../interfaces/interface";
+import { createProduct, updateProduct } from "../../api/ProductAPI";
+import { Product, ProductDTO } from "../../interfaces/interface";
 import { EditTextField } from "../EditTextField/EditTextField";
 
 const useStyles = makeStyles((theme) => ({
@@ -43,11 +43,20 @@ const useStyles = makeStyles((theme) => ({
 interface EditProductModalI {
   open: boolean;
   onClose: () => void;
-  product: Product;
+  product: Product | null;
 }
 const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
   const css = useStyles();
-  const [currentProduct, setCurrentProduct] = useState<Product>(product);
+  const [currentProduct, setCurrentProduct] = useState<ProductDTO>({
+    name: "",
+    price: 100,
+    width: 1,
+    length: 1,
+    height: 1,
+    weight: 1,
+    stock: 1,
+    description: "",
+  });
 
   const [productStock, setProductStock] = useState(0);
   const [currentProductError, setCurrentProductError] = useState({
@@ -64,9 +73,47 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
   const [disabledButton, setDisabledButton] = useState(true);
 
   useEffect(() => {
-    setCurrentProduct(product);
+    let productDTO: ProductDTO;
+    setCurrentProductError({
+      name: { value: false, msg: "" },
+      price: { value: false, msg: "" },
+      width: { value: false, msg: "" },
+      length: { value: false, msg: "" },
+      height: { value: false, msg: "" },
+      weight: { value: false, msg: "" },
+      stock: { value: false, msg: "" },
+      description: { value: false, msg: "" },
+    });
+    if (product) {
+      productDTO = {
+        name: product.name,
+        price: +product.price,
+        width: +product.width,
+        length: +product.length,
+        height: +product.height,
+        weight: +product.weight,
+        stock: +product.stock,
+        description: product.description,
+      };
+    } else {
+      setDisableEdit(false);
+      productDTO = {
+        name: "",
+        price: 100,
+        width: 1,
+        length: 1,
+        height: 1,
+        weight: 1,
+        stock: 1,
+        description: "",
+      };
+    }
+    setCurrentProduct(productDTO);
   }, [product]);
   useEffect(() => {
+    if (!currentProduct) {
+      return;
+    }
     const isEmpty = Object.values(currentProduct).includes("");
     const shouldBeDisabled =
       currentProductError.name.value ||
@@ -85,60 +132,75 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
   }, [currentProductError, productStock, disabledEdit, currentProduct]);
 
   const handleUpdateProduct = () => {
-    const updatedProduct: ProductUpdate = {
+    const updatedProduct: ProductDTO = {
       name: currentProduct.name,
       description: currentProduct.description,
-      stock: productStock,
+      stock: product ? productStock : currentProduct.stock,
       price: +currentProduct.price,
       weight: +currentProduct.weight,
       height: +currentProduct.height,
       width: +currentProduct.width,
       length: +currentProduct.length,
     };
-
-    updateProduct(updatedProduct, currentProduct.id)
-      .then((data) => {
-        setCurrentProduct(data);
-        setDisableEdit(true);
-        setProductStock(0);
-        onClose();
-      })
-      .catch((error) => console.log(error));
+    if (product) {
+      updateProduct(updatedProduct, product.id)
+        .then((data) => {
+          setCurrentProduct(data);
+          setDisableEdit(true);
+          setProductStock(0);
+          onClose();
+        })
+        .catch((error) => console.log(error));
+    } else {
+      createProduct(updatedProduct)
+        .then(() => onClose())
+        .catch((error) => console.log(error));
+    }
   };
 
   const handleClose = () => {
-    setCurrentProduct(product);
-    setProductStock(0);
-    setCurrentProductError({
-      name: { value: false, msg: "" },
-      price: { value: false, msg: "" },
-      width: { value: false, msg: "" },
-      length: { value: false, msg: "" },
-      height: { value: false, msg: "" },
-      weight: { value: false, msg: "" },
-      stock: { value: false, msg: "" },
-      description: { value: false, msg: "" },
-    });
+    if (product) {
+      setProductStock(0);
+    }
+
     setDisableEdit(true);
     onClose();
   };
 
   const handleEdit = () => {
-    if (!disabledEdit) {
-      setCurrentProduct(product);
-      setProductStock(0);
-      setCurrentProductError({
-        name: { value: false, msg: "" },
-        price: { value: false, msg: "" },
-        width: { value: false, msg: "" },
-        length: { value: false, msg: "" },
-        height: { value: false, msg: "" },
-        weight: { value: false, msg: "" },
-        stock: { value: false, msg: "" },
-        description: { value: false, msg: "" },
-      });
+    if (product) {
+      if (!disabledEdit) {
+        setCurrentProduct({
+          name: product.name,
+          price: +product.price,
+          width: +product.width,
+          length: +product.length,
+          height: +product.height,
+          weight: +product.weight,
+          stock: +product.stock,
+          description: product.description,
+        });
+        setProductStock(0);
+        setCurrentProductError({
+          name: { value: false, msg: "" },
+          price: { value: false, msg: "" },
+          width: { value: false, msg: "" },
+          length: { value: false, msg: "" },
+          height: { value: false, msg: "" },
+          weight: { value: false, msg: "" },
+          stock: { value: false, msg: "" },
+          description: { value: false, msg: "" },
+        });
+      }
+      setDisableEdit(!disabledEdit);
     }
-    setDisableEdit(!disabledEdit);
+  };
+
+  const handleStockChange = () => {
+    if (product) {
+      product.stock + (productStock - 1) >= 0 &&
+        setProductStock(productStock - 1);
+    }
   };
 
   const handleStock = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,13 +228,15 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
     }
   };
   const handleChange =
-    (prop: keyof Product) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    (prop: keyof ProductDTO) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
-      setCurrentProduct((prevState) => ({
-        ...prevState,
-        [prop]: value,
-      }));
-
+      if (currentProduct) {
+        setCurrentProduct((prevState) => ({
+          ...prevState,
+          [prop]: value,
+        }));
+      }
       if (value === "") {
         setCurrentProductError((prevState) => ({
           ...prevState,
@@ -205,23 +269,14 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
           prop === "length" ||
           prop === "width" ||
           prop === "height" ||
-          prop === "weight"
+          prop === "weight" ||
+          prop === "stock"
         ) {
           if (+value > 0) {
             valid = true;
           } else {
             invalidMessage = `${prop} cannot be 0`;
           }
-          // regex = /^\d+$/;
-          // if (regex.test(value)) {
-          //   if (+value > 0) {
-          //     valid = true;
-          //   } else {
-          //     invalidMessage = `${prop} cannot be 0`;
-          //   }
-          // } else {
-          //   invalidMessage = "Must be a number";
-          // }
         } else {
           return;
         }
@@ -249,7 +304,9 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
       {currentProduct ? (
         <>
           <Grid container justify="space-between">
-            <DialogTitle id="customized-dialog-title">{`Edit Product`}</DialogTitle>
+            <DialogTitle id="customized-dialog-title">
+              {product ? "Edit Product" : "Add New Product"}
+            </DialogTitle>
             <DialogActions>
               <IconButton
                 data-testid="close-modal"
@@ -263,15 +320,18 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
           </Grid>
 
           <DialogContent dividers classes={{ dividers: css.dividers }}>
-            <Button
-              className={css.editButton}
-              variant="contained"
-              color={disabledEdit ? "secondary" : "primary"}
-              onClick={handleEdit}
-              startIcon={disabledEdit ? <EditOutlined /> : <CancelOutlined />}
-            >
-              {disabledEdit ? "Edit" : "Cancel"}
-            </Button>
+            {product && (
+              <Button
+                className={css.editButton}
+                variant="contained"
+                color={disabledEdit ? "secondary" : "primary"}
+                onClick={handleEdit}
+                startIcon={disabledEdit ? <EditOutlined /> : <CancelOutlined />}
+              >
+                {disabledEdit ? "Edit" : "Cancel"}
+              </Button>
+            )}
+
             <EditTextField
               disabled={disabledEdit}
               id="name"
@@ -398,11 +458,12 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
             <Grid container spacing={2}>
               <Grid item xs={4}>
                 <EditTextField
-                  disabled={disabledEdit}
+                  disabled={product !== null}
                   id="currentStock"
                   type="number"
                   label="Stock"
                   inputProps={{ min: 0, max: 999 }}
+                  onChange={handleChange("stock")}
                   value={currentProduct.stock}
                   InputProps={{
                     endAdornment: (
@@ -416,50 +477,49 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={8}>
-                <EditTextField
-                  disabled={disabledEdit}
-                  id="stock"
-                  type="number"
-                  label="Edit Stock"
-                  inputProps={{
-                    min: -currentProduct.stock,
-                    max: 999,
-                    style: { textAlign: "center" },
-                  }}
-                  value={productStock}
-                  onChange={handleStock}
-                  helperText={currentProductError.stock.msg}
-                  error={currentProductError.stock.value}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <IconButton
-                          color="secondary"
-                          disabled={disabledEdit}
-                          onClick={() =>
-                            product.stock + (productStock - 1) >= 0 &&
-                            setProductStock(productStock - 1)
-                          }
-                        >
-                          <RemoveOutlined />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          color="secondary"
-                          disabled={disabledEdit}
-                          onClick={() => setProductStock(productStock + 1)}
-                        >
-                          <AddOutlined />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
+              {product && (
+                <Grid item xs={8}>
+                  <EditTextField
+                    disabled={disabledEdit}
+                    id="stock"
+                    type="number"
+                    label="Edit Stock"
+                    inputProps={{
+                      min: -currentProduct.stock,
+                      max: 999,
+                      style: { textAlign: "center" },
+                    }}
+                    value={productStock}
+                    onChange={handleStock}
+                    helperText={currentProductError.stock.msg}
+                    error={currentProductError.stock.value}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconButton
+                            color="secondary"
+                            disabled={disabledEdit}
+                            onClick={handleStockChange}
+                          >
+                            <RemoveOutlined />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            color="secondary"
+                            disabled={disabledEdit}
+                            onClick={() => setProductStock(productStock + 1)}
+                          >
+                            <AddOutlined />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+              )}
             </Grid>
 
             <EditTextField

@@ -1,5 +1,5 @@
 import axiosInstance from "../axios/axios";
-import { ProductUpdate } from "../interfaces/interface";
+import { ProductDTO } from "../interfaces/interface";
 
 export async function getProducts(): Promise<any> {
   const response = await axiosInstance.get("/product");
@@ -22,11 +22,16 @@ export async function bookmarkProduct(id: string): Promise<any> {
 }
 
 export async function updateProduct(
-  product: ProductUpdate,
+  product: ProductDTO,
   productId: string
 ): Promise<any> {
   const response = await axiosInstance.put(`/product/${productId}`, {
     ...product,
   });
+  return response.data;
+}
+
+export async function createProduct(product: ProductDTO): Promise<any> {
+  const response = await axiosInstance.post("/product", { ...product });
   return response.data;
 }
