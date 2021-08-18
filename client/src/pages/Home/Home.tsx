@@ -1,9 +1,8 @@
-import { Button, Grid, makeStyles, Paper } from "@material-ui/core";
+import { Grid, makeStyles, Paper } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-
 import { getProducts } from "../../api/ProductAPI";
 import ProductCard from "../../components/ProductCard/ProductCard";
-import { useToastS } from "../../components/Toast/ToastContext";
+// import { useToastS } from "../../components/Toast/ToastContext";
 import { Product } from "../../interfaces/interface";
 
 const useStyle = makeStyles((theme) => ({
@@ -11,29 +10,32 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     flex: "1",
-
-    padding: "1rem",
     marginTop: "0",
-
     backgroundColor: theme.palette.background.default,
+  },
+  baseGrid: {
+    width: "100%",
   },
   productList: {
     display: "flex",
     flexWrap: "wrap",
   },
+  product: {
+    width: "100%",
+  },
 }));
 const Home = () => {
   const css = useStyle();
-  const { openToast } = useToastS();
+  // const { openToast } = useToastS();
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     getProducts().then((data) => setProducts(data));
   }, []);
 
-  const open = () => {
-    openToast("test");
-  };
+  // const open = () => {
+  //   openToast("test");
+  // };
 
   const renderProduct = () => {
     if (products.length > 0) {

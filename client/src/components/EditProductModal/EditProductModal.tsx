@@ -72,7 +72,8 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
   const [disabledEdit, setDisableEdit] = useState(true);
   const [disabledButton, setDisabledButton] = useState(true);
 
-  useEffect(() => {
+  const handleEnter = () => {
+    setProductStock(0);
     let productDTO: ProductDTO;
     setCurrentProductError({
       name: { value: false, msg: "" },
@@ -96,6 +97,7 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
         description: product.description,
       };
     } else {
+      console.log("run");
       setDisableEdit(false);
       productDTO = {
         name: "",
@@ -109,11 +111,48 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
       };
     }
     setCurrentProduct(productDTO);
-  }, [product]);
+  };
+
+  // useEffect(() => {
+  //   let productDTO: ProductDTO;
+  //   setCurrentProductError({
+  //     name: { value: false, msg: "" },
+  //     price: { value: false, msg: "" },
+  //     width: { value: false, msg: "" },
+  //     length: { value: false, msg: "" },
+  //     height: { value: false, msg: "" },
+  //     weight: { value: false, msg: "" },
+  //     stock: { value: false, msg: "" },
+  //     description: { value: false, msg: "" },
+  //   });
+  //   if (product) {
+  //     productDTO = {
+  //       name: product.name,
+  //       price: +product.price,
+  //       width: +product.width,
+  //       length: +product.length,
+  //       height: +product.height,
+  //       weight: +product.weight,
+  //       stock: +product.stock,
+  //       description: product.description,
+  //     };
+  //   } else {
+  //     console.log("run");
+  //     setDisableEdit(false);
+  //     productDTO = {
+  //       name: "",
+  //       price: 100,
+  //       width: 1,
+  //       length: 1,
+  //       height: 1,
+  //       weight: 1,
+  //       stock: 1,
+  //       description: "",
+  //     };
+  //   }
+  //   setCurrentProduct(productDTO);
+  // }, [open]);
   useEffect(() => {
-    if (!currentProduct) {
-      return;
-    }
     const isEmpty = Object.values(currentProduct).includes("");
     const shouldBeDisabled =
       currentProductError.name.value ||
@@ -158,12 +197,33 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
     }
   };
 
-  const handleClose = () => {
-    if (product) {
-      setProductStock(0);
-    }
-
+  const handleExit = () => {
+    //reset everything
     setDisableEdit(true);
+    setProductStock(0);
+    setCurrentProduct({
+      name: "",
+      price: 100,
+      width: 1,
+      length: 1,
+      height: 1,
+      weight: 1,
+      stock: 1,
+      description: "",
+    });
+    setCurrentProductError({
+      name: { value: false, msg: "" },
+      price: { value: false, msg: "" },
+      width: { value: false, msg: "" },
+      length: { value: false, msg: "" },
+      height: { value: false, msg: "" },
+      weight: { value: false, msg: "" },
+      stock: { value: false, msg: "" },
+      description: { value: false, msg: "" },
+    });
+  };
+
+  const handleClose = () => {
     onClose();
   };
 
@@ -295,6 +355,10 @@ const EditProductModal = ({ open, onClose, product }: EditProductModalI) => {
     };
   return (
     <Dialog
+      TransitionProps={{
+        onEnter: () => handleEnter(),
+        onExit: () => handleExit(),
+      }}
       onClose={handleClose}
       aria-labelledby="customized-dialog-title"
       open={open}

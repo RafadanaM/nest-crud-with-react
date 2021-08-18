@@ -13,8 +13,12 @@ import { Product } from "../../interfaces/interface";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: "250px",
-    minWidth: "170px",
+    display: "flex",
+    width: "250px",
+    [theme.breakpoints.down("sm")]: {
+      width: "150px",
+    },
+
     backgroundColor: theme.palette.background.paper,
   },
   title: {
@@ -53,7 +57,7 @@ const ProductCard = ({ product }: ProductCardProp) => {
             title="Title"
           />
           <CardContent>
-            <Typography gutterBottom className={css.title}>
+            <Typography gutterBottom className={css.title} noWrap>
               {product.name}
             </Typography>
             <Typography gutterBottom className={css.price}>
