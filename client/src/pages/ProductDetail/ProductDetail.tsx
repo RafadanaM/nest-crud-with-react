@@ -23,6 +23,7 @@ import theme from "../../theme";
 import { bookmarkProduct, getProduct } from "../../api/ProductAPI";
 import { getUserWishlist } from "../../api/UserAPI";
 import { orderProduct } from "../../api/OrderAPI";
+import { addToCart } from "../../api/CartAPI";
 const useStyles = makeStyles({
   baseContainer: {
     width: "100%",
@@ -103,8 +104,9 @@ const ProductDetail = () => {
   const css = useStyles();
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<null | Product>(null);
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [isInWishlist, setIsInWistlist] = useState(false);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+  const [isInWishlist, setIsInWistlist] = useState<boolean>(false);
   const { currentUser } = useAuth();
   const order = async () => {
     setButtonDisabled(true);
@@ -117,6 +119,15 @@ const ProductDetail = () => {
         data.isAdd ? setIsInWistlist(true) : setIsInWistlist(false);
       })
       .catch((err) => console.log(err));
+  };
+
+  const addProductToCart = () => {
+    addToCart(id)
+      .then((data) => {
+        console.log(data);
+        alert("Product added to wishlist");
+      })
+      .catch((error) => console.log(error));
   };
 
   const getWishlist = () => {
@@ -201,6 +212,7 @@ const ProductDetail = () => {
                       fullWidth
                       className={css.button}
                       endIcon={<AddShoppingCartIcon />}
+                      onClick={() => addProductToCart()}
                     >
                       Add to Cart
                     </Button>
