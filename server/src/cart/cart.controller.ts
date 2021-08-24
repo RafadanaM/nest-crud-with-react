@@ -47,7 +47,7 @@ export class CartController {
     return this.cartService.addItem(productId, userId, data);
   }
 
-  @Delete('/item:id')
+  @Delete('/item/:id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('Buyer', 'Seller')
   @UsePipes(ValidationPipe)
