@@ -9,6 +9,7 @@ import { CartItemService } from 'src/cart-item/cart-item.service';
 import { OrderItemDTO } from 'src/order-item/order-item.dto';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
+import { CartItemDTO } from './cart-item.dto';
 import { CartEntity } from './cart.entity';
 
 @Injectable()
@@ -51,14 +52,14 @@ export class CartService {
     return newCart;
   }
 
-  async addItem(productId: string, userId: string, data: OrderItemDTO) {
+  async addItem(userId: string, data: CartItemDTO) {
     const cart = await this.cartRepository.findOne({
       where: { cart_user: { id: userId } },
     });
     if (!cart) {
       throw new NotFoundException('Cart Not Found');
     }
-    await this.cartItemService.createCartItem(productId, cart, data);
+    await this.cartItemService.createCartItem(cart, data);
 
     return 'Product Succesfully Added To Cart';
   }

@@ -10,12 +10,13 @@ import {
   Divider,
   Grid,
   IconButton,
+  InputAdornment,
   makeStyles,
   Paper,
   Typography,
 } from "@material-ui/core";
 import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
-import { Favorite } from "@material-ui/icons";
+import { AddOutlined, Favorite, RemoveOutlined } from "@material-ui/icons";
 import { useAuth } from "../../auth/AuthContext";
 import BackButton from "../../components/BackButton/BackButton";
 import theme from "../../theme";
@@ -24,6 +25,7 @@ import { bookmarkProduct, getProduct } from "../../api/ProductAPI";
 import { getUserWishlist } from "../../api/UserAPI";
 import { orderProduct } from "../../api/OrderAPI";
 import { addToCart } from "../../api/CartAPI";
+import { EditTextField } from "../../components/EditTextField/EditTextField";
 const useStyles = makeStyles({
   baseContainer: {
     width: "100%",
@@ -190,7 +192,7 @@ const ProductDetail = () => {
                 <Divider orientation="vertical" flexItem />
                 <Box className={css.bottomItem}>
                   <Box className={css.amountContainer}>
-                    <Typography>Change Amount</Typography>
+                    <Typography>{`Stock: ${product.stock} left`}</Typography>
                     <IconButton
                       className={css.wishlist}
                       onClick={() => wishlist()}
@@ -203,9 +205,52 @@ const ProductDetail = () => {
                     </IconButton>
                   </Box>
 
-                  <Typography>{`Stock: ${product.stock} left`}</Typography>
-                  <Typography>{`Subtotal: Rp${product.price}`}</Typography>
-                  <Box className={css.buttonContainer}>
+                  {/* <Typography>Quantity</Typography> */}
+                  <div style={{ marginTop: "auto" }}>
+                    <EditTextField
+                      required={false}
+                      id="stock"
+                      type="number"
+                      // label="Quantity"
+                      inputProps={{
+                        min: 1,
+                        max: 99,
+                        style: { textAlign: "center" },
+                      }}
+                      value={quantity}
+                      //onChange={}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconButton
+                              color="secondary"
+                              onClick={() =>
+                                quantity > 1 && setQuantity(quantity - 1)
+                              }
+                            >
+                              <RemoveOutlined />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              color="secondary"
+                              onClick={() =>
+                                quantity < 98 && setQuantity(quantity + 1)
+                              }
+                            >
+                              <AddOutlined />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <Typography>{`Subtotal: Rp${
+                      +product.price * quantity
+                    }`}</Typography>
+                  </div>
+                  <Box>
                     <Button
                       color="secondary"
                       variant="contained"

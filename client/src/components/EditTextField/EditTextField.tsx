@@ -51,7 +51,6 @@ export const EditTextField = ({ disabled, ...rest }: TextFieldProps) => {
     <TextField
       disabled={disabled}
       {...rest}
-      required
       fullWidth
       margin="normal"
       InputLabelProps={{

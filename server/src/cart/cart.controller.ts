@@ -39,12 +39,8 @@ export class CartController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('Buyer', 'Seller')
   @UsePipes(ValidationPipe)
-  createNewCartItem(
-    @User('userId') userId: string,
-    @Param('id', ParseUUIDPipe) productId: string,
-    @Body() data: CartItemDTO,
-  ) {
-    return this.cartService.addItem(productId, userId, data);
+  createNewCartItem(@User('userId') userId: string, @Body() data: CartItemDTO) {
+    return this.cartService.addItem(userId, data);
   }
 
   @Delete('/item/:id')

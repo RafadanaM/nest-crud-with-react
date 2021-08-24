@@ -20,7 +20,6 @@ export class CartItemEntity {
   @Column('integer') quantity: number;
 
   @ManyToOne((type) => ProductEntity, (product) => product.cart_items, {
-    eager: true,
     onDelete: 'SET NULL',
   })
   product: ProductEntity;
