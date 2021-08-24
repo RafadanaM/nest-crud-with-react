@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CartEntity } from 'src/cart/cart.entity';
-import { CartService } from 'src/cart/cart.service';
-import { OrderItemDTO } from 'src/order-item/order-item.dto';
-import { ProductService } from 'src/product/product.service';
-import { UserService } from 'src/user/user.service';
+import { CartEntity } from '../cart/cart.entity';
+import { OrderItemDTO } from '../order-item/order-item.dto';
+import { ProductService } from '../product/product.service';
 import { Repository } from 'typeorm';
 import { CartItemEntity } from './cart-item.entity';
 
@@ -15,6 +17,12 @@ export class CartItemService {
     private cartItemRepository: Repository<CartItemEntity>,
     private readonly productService: ProductService, //private readonly userService: UserService
   ) {}
+
+  private isOwned(cartItem: CartItemEntity, userId: string) {
+    if (cartItem.cart.cart_user.id !== userId) {
+      throw new ForbiddenException();
+    }
+  }
 
   async createCartItem(
     productId: string,
@@ -30,5 +38,17 @@ export class CartItemService {
     await this.cartItemRepository.save(cartItem);
 
     return cartItem;
+  }
+
+  async deleteCartItem(cartItemId: string) {
+    const cartItem = await this.cartItemRepository.findOne({
+      where: { id: cartItemId },
+      relations: ['cart'],
+    });
+    if (!cartItem) {
+      throw new NotFoundException();
+    }
+    await this.cartItemRepository.delete({ id: cartItemId });
+    return 'cartItem Deleted';
   }
 }

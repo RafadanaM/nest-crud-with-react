@@ -18,7 +18,7 @@ export class CartEntity {
 
   @UpdateDateColumn() updated: Date;
 
-  @OneToOne((type) => UserEntity, (user) => user.cart)
+  @OneToOne((type) => UserEntity, (user) => user.cart, { eager: true })
   @JoinColumn()
   cart_user: UserEntity;
 

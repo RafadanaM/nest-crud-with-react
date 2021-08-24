@@ -6,3 +6,8 @@ export async function addToCart(productId: string): Promise<any> {
   });
   return response.data;
 }
+
+export async function getChart(): Promise<any> {
+  const response = await axiosInstance.get("cart");
+  return response.data;
+}

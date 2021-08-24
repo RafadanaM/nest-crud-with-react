@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   ParseUUIDPipe,
   Post,
@@ -18,15 +19,14 @@ import { OrderItemDTO } from 'src/order-item/order-item.dto';
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
-  // @Post(':id')
+  // @Delete(':id')
   // @UseGuards(AuthGuard('jwt'), RolesGuard)
   // @Roles('Buyer', 'Seller')
   // @UsePipes(ValidationPipe)
   // createNewCartItem(
   //   @User('userId') userId: string,
   //   @Param('id', ParseUUIDPipe) productId: string,
-  //   @Body() data: OrderItemDTO,
   // ) {
-  //   return this.cartItemService.createCartItem(productId, userId, data);
+  //   return this.cartItemService.deleteCartItem(productId, userId);
   // }
 }

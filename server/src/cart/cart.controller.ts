@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -15,6 +16,7 @@ import { Roles } from 'src/decorator/roles.decorator';
 import { User } from 'src/decorator/user.decorator';
 import { RolesGuard } from 'src/helpers/roles.guard';
 import { OrderItemDTO } from 'src/order-item/order-item.dto';
+import { CartItemDTO } from './cart-item.dto';
 import { CartService } from './cart.service';
 
 @Controller('api/cart')
@@ -27,19 +29,32 @@ export class CartController {
   }
 
   @Get()
-  getOneCart() {
-    return this.cartService.getOneCart('f86fed85-2cfd-46c8-a71b-87b2b0dd5cce');
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('Buyer', 'Seller')
+  getOneCart(@User('userId') userId: string) {
+    return this.cartService.getOneCart(userId);
   }
 
-  @Post('/product/:id/add')
+  @Post('/item')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('Buyer', 'Seller')
   @UsePipes(ValidationPipe)
   createNewCartItem(
     @User('userId') userId: string,
     @Param('id', ParseUUIDPipe) productId: string,
-    @Body() data: OrderItemDTO,
+    @Body() data: CartItemDTO,
   ) {
-    return this.cartService.addItemToCart(productId, userId, data);
+    return this.cartService.addItem(productId, userId, data);
+  }
+
+  @Delete('/item:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('Buyer', 'Seller')
+  @UsePipes(ValidationPipe)
+  deleteCartItem(
+    @User('userId') userId: string,
+    @Param('id', ParseUUIDPipe) productId: string,
+  ) {
+    return this.cartService.deleteItem(productId, userId);
   }
 }

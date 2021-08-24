@@ -7,9 +7,14 @@ import { CartService } from 'src/cart/cart.service';
 import { UserService } from 'src/user/user.service';
 import { ProductModule } from 'src/product/product.module';
 import { CartModule } from 'src/cart/cart.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CartItemEntity]), ProductModule],
+  imports: [
+    TypeOrmModule.forFeature([CartItemEntity]),
+    ProductModule,
+    UserModule,
+  ],
   providers: [CartItemService],
   controllers: [CartItemController],
   exports: [CartItemService],

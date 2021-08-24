@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -19,6 +20,11 @@ export class CartService {
     private readonly cartItemService: CartItemService,
   ) {}
 
+  private isOwned(cart: CartEntity, userId: string) {
+    if (cart.cart_user.id !== userId) {
+      throw new ForbiddenException();
+    }
+  }
   async getOneCart(userId: string) {
     const cart = await this.cartRepository.findOne({
       where: { cart_user: { id: userId } },
@@ -45,7 +51,7 @@ export class CartService {
     return newCart;
   }
 
-  async addItemToCart(productId: string, userId: string, data: OrderItemDTO) {
+  async addItem(productId: string, userId: string, data: OrderItemDTO) {
     const cart = await this.cartRepository.findOne({
       where: { cart_user: { id: userId } },
     });
@@ -55,5 +61,16 @@ export class CartService {
     await this.cartItemService.createCartItem(productId, cart, data);
 
     return 'Product Succesfully Added To Cart';
+  }
+
+  async deleteItem(userId: string, cartItemId: string) {
+    const cart = await this.cartRepository.findOne({
+      where: { cart_user: { id: userId } },
+    });
+    if (!cart) {
+      throw new NotFoundException('Cart Not Found');
+    }
+    this.isOwned(cart, userId);
+    return await this.cartItemService.deleteCartItem(cartItemId);
   }
 }
