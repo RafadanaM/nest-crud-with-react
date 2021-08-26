@@ -82,7 +82,6 @@ export class OrderController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('Buyer', 'Seller')
   @Post('product/:id')
-  @UsePipes(ValidationPipe)
   async orderProduct(
     @User('userId') userId: string,
     @Param('id', ParseUUIDPipe) productId: string,

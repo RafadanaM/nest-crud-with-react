@@ -1,9 +1,12 @@
 import axiosInstance from "../axios/axios";
 
-export async function addToCart(productId: string): Promise<any> {
+export async function addToCart(
+  productId: string,
+  quantity: number
+): Promise<any> {
   const response = await axiosInstance.post(`cart/item`, {
     productId: productId,
-    quantity: 2,
+    quantity: quantity,
   });
   return response.data;
 }

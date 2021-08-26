@@ -87,3 +87,19 @@ export interface IconText {
   icon: ReactElement;
   path: string;
 }
+
+export interface CartItem {
+  id: string;
+  created: Date;
+  updated: Date;
+  quantity: number;
+  product: Product;
+}
+
+export interface CartI {
+  id: string;
+  created: Date;
+  updated: Date;
+  cart_user?: User;
+  cart_items: CartItem[];
+}

@@ -41,6 +41,8 @@ export class CartItemService {
 
       return cartItem;
     }
+
+    
     // else add quantity
     await this.cartItemRepository.update(
       { id: checkCartItem.id },

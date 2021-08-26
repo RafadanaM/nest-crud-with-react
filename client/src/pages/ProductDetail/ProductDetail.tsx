@@ -112,7 +112,12 @@ const ProductDetail = () => {
   const { currentUser } = useAuth();
   const order = async () => {
     setButtonDisabled(true);
-    orderProduct(id);
+    orderProduct(id)
+      .then((data) => alert("Product Succesfully ordered"))
+      .catch((err) => {
+        console.log(err);
+        alert(err.data?.message?.message);
+      });
     setButtonDisabled(false);
   };
   const wishlist = () => {
@@ -124,7 +129,7 @@ const ProductDetail = () => {
   };
 
   const addProductToCart = () => {
-    addToCart(id)
+    addToCart(id, quantity)
       .then((data) => {
         console.log(data);
         alert("Product added to wishlist");
@@ -257,7 +262,7 @@ const ProductDetail = () => {
                       fullWidth
                       className={css.button}
                       endIcon={<AddShoppingCartIcon />}
-                      onClick={() => addProductToCart()}
+                      onClick={addProductToCart}
                     >
                       Add to Cart
                     </Button>
