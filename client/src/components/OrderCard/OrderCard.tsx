@@ -92,7 +92,15 @@ const OrderCard = ({ order, url }: OrderCardProp) => {
         <Divider className={css.divider} />
         <Typography>Items:</Typography>
         {order.order_items.map((orderItem) => {
-          return <OrderItemCard key={orderItem.id} orderItem={orderItem} />;
+          return (
+            <OrderItemCard
+              key={orderItem.id}
+              itemName={orderItem.name}
+              price={orderItem.price}
+              sellerName={orderItem.sellerName}
+              quantity={orderItem.quantity}
+            />
+          );
         })}
       </CardContent>
       <CardActions>

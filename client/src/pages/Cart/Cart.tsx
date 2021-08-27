@@ -1,6 +1,7 @@
 import { CircularProgress } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import { getChart } from "../../api/CartAPI";
+import ItemCard from "../../components/OrderItemCard/OrderItemCard";
 import { CartI } from "../../interfaces/interface";
 
 const Cart = () => {
@@ -18,7 +19,16 @@ const Cart = () => {
   return cart ? (
     <div>
       {cart.cart_items.map((cartItem) => {
-        return <p>{cartItem.product.name}</p>;
+        return (
+          <>
+            <ItemCard
+              sellerName={cartItem.product.creator.username}
+              itemName={cartItem.product.name}
+              quantity={cartItem.quantity}
+              price={cartItem.product.price}
+            />
+          </>
+        );
       })}
     </div>
   ) : (

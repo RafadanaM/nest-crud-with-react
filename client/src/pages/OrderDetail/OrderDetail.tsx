@@ -11,8 +11,8 @@ import { OrderI } from "../../interfaces/interface";
 import { useHistory } from "react-router-dom";
 import { AxiosError } from "axios";
 import { Status } from "../../enum/enum";
-import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
 import { changeOrderStatus, getOrder } from "../../api/OrderAPI";
+import ItemCard from "../../components/OrderItemCard/OrderItemCard";
 const useStyles = makeStyles({
   baseContainer: {
     display: "flex",
@@ -113,7 +113,15 @@ const OrderDetail = () => {
       </Grid>
 
       {order.order_items.map((orderItem) => {
-        return <OrderItemCard key={orderItem.id} orderItem={orderItem} />;
+        return (
+          <ItemCard
+            key={orderItem.id}
+            itemName={orderItem.name}
+            sellerName={orderItem.sellerName}
+            price={orderItem.price}
+            quantity={orderItem.quantity}
+          />
+        );
       })}
     </div>
   ) : (

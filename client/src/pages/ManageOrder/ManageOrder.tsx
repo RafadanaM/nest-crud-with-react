@@ -172,7 +172,12 @@ const ManageOrder = () => {
       )}
       {orderItems.map((orderItem) => (
         <div className={css.card} key={orderItem.id}>
-          <OrderItemCard orderItem={orderItem} />
+          <OrderItemCard
+            itemName={orderItem.name}
+            sellerName={orderItem.sellerName}
+            price={orderItem.price}
+            quantity={orderItem.quantity}
+          />
           {(orderItem.status === Status.WaitingForSeller ||
             orderItem.status === Status.WaitingForDelivery) && (
             <Box className={css.baseContainer}>

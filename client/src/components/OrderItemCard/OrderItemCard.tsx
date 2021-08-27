@@ -1,5 +1,4 @@
 import React from "react";
-import { OrderItem } from "../../interfaces/interface";
 import {
   Box,
   Card,
@@ -71,11 +70,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface OrderItemCardProp {
-  orderItem: OrderItem;
+interface ItemCardProp {
+  itemName: string;
+  sellerName: string;
+  quantity: number;
+  price: string;
 }
 
-const OrderItemCard = ({ orderItem }: OrderItemCardProp) => {
+const ItemCard = ({ itemName, sellerName, quantity, price }: ItemCardProp) => {
   const css = useStyles();
 
   // const showDate = (date: Date) => {
@@ -93,7 +95,7 @@ const OrderItemCard = ({ orderItem }: OrderItemCardProp) => {
       className={`${css.root} ${css.outlined} ${css.rounded}`}
     >
       <CardContent>
-        <Typography>{orderItem.sellerName}</Typography>
+        <Typography>{sellerName}</Typography>
         <Box className={css.orderItemContainer}>
           <img
             alt="Product"
@@ -102,16 +104,16 @@ const OrderItemCard = ({ orderItem }: OrderItemCardProp) => {
           />
           <Box className={css.orderItemContent}>
             <Box>
-              <Typography>{orderItem.name}</Typography>
+              <Typography>{itemName}</Typography>
               <Typography
                 variant="body2"
                 component="p"
                 color="textSecondary"
-              >{`${orderItem.quantity} x Rp.${orderItem.price}`}</Typography>
+              >{`${quantity} x Rp.${price}`}</Typography>
             </Box>
             <Box className={css.total}>
               <Typography component="h6">
-                {`Rp.${orderItem.quantity * parseInt(orderItem.price)}`}
+                {`Rp.${quantity * parseInt(price)}`}
               </Typography>
             </Box>
           </Box>
@@ -121,4 +123,4 @@ const OrderItemCard = ({ orderItem }: OrderItemCardProp) => {
   );
 };
 
-export default OrderItemCard;
+export default ItemCard;
