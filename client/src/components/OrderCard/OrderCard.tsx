@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { months } from "../../enum/enum";
-import OrderItemCard from "../OrderItemCard/OrderItemCard";
+import OrderItemCard from "../ItemCard/ItemCard";
 
 const useStyles = makeStyles({
   root: {

@@ -1,7 +1,7 @@
 import { CircularProgress } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import { getChart } from "../../api/CartAPI";
-import ItemCard from "../../components/OrderItemCard/OrderItemCard";
+import ItemCard from "../../components/ItemCard/ItemCard";
 import { CartI } from "../../interfaces/interface";
 
 const Cart = () => {
@@ -22,6 +22,7 @@ const Cart = () => {
         return (
           <>
             <ItemCard
+              key={cartItem.id}
               sellerName={cartItem.product.creator.username}
               itemName={cartItem.product.name}
               quantity={cartItem.quantity}

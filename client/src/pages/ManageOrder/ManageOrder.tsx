@@ -14,7 +14,8 @@ import {
 } from "../../api/OrderItemAPI";
 
 import BackButton from "../../components/BackButton/BackButton";
-import OrderItemCard from "../../components/OrderItemCard/OrderItemCard";
+import ItemCard from "../../components/ItemCard/ItemCard";
+import StatusFilter from "../../components/StatusFilter/StatusFilter";
 
 import { Status } from "../../enum/enum";
 import { OrderItem } from "../../interfaces/interface";
@@ -88,32 +89,13 @@ const ManageOrder = () => {
   );
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
-  const status: Status[] = [
-    Status.All,
-    Status.WaitingForPayment,
-    Status.WaitingForSeller,
-    Status.WaitingForDelivery,
-    Status.Delivering,
-    Status.Completed,
-  ];
-
-  const clickHandler = (status: Status) => {
-    // query.set("status", Status.WaitingForDelivery);
-    setFilter(status);
+  const changeFilterSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setFilter(event.target.value as Status);
   };
-  const renderFilter = () => {
-    return status.map((x) => (
-      <Button
-        key={x}
-        size="small"
-        className={css.button}
-        color="secondary"
-        variant={x === query.get("status") ? "contained" : "outlined"}
-        onClick={() => clickHandler(x)}
-      >
-        {x}
-      </Button>
-    ));
+
+  const changeFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log(event.currentTarget.value);
+    setFilter(event.currentTarget.value as Status);
   };
 
   const orderAction = (orderId: string, status: string) => {
@@ -163,7 +145,11 @@ const ManageOrder = () => {
         <Typography className={css.text} variant="subtitle2">
           STATUS
         </Typography>
-        {renderFilter()}
+        <StatusFilter
+          onClick={changeFilterClick}
+          onChange={changeFilterSelect}
+          currentFilter={filter ? filter : "all"}
+        />
       </div>
       {orderItems.length === 0 && (
         <Typography variant="h4" className={css.empty}>
@@ -172,7 +158,7 @@ const ManageOrder = () => {
       )}
       {orderItems.map((orderItem) => (
         <div className={css.card} key={orderItem.id}>
-          <OrderItemCard
+          <ItemCard
             itemName={orderItem.name}
             sellerName={orderItem.sellerName}
             price={orderItem.price}

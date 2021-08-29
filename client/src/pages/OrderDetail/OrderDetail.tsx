@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 import { AxiosError } from "axios";
 import { Status } from "../../enum/enum";
 import { changeOrderStatus, getOrder } from "../../api/OrderAPI";
-import ItemCard from "../../components/OrderItemCard/OrderItemCard";
+import ItemCard from "../../components/ItemCard/ItemCard";
 const useStyles = makeStyles({
   baseContainer: {
     display: "flex",

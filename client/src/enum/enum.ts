@@ -35,3 +35,12 @@ export enum OrderType {
   DeliveringOrder = "Delivering Order",
   CompletedOrder = "Completed Order",
 }
+
+export const status: Status[] = [
+  Status.All,
+  Status.WaitingForPayment,
+  Status.WaitingForSeller,
+  Status.WaitingForDelivery,
+  Status.Delivering,
+  Status.Completed,
+];
