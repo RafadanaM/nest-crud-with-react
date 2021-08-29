@@ -58,13 +58,16 @@ const useStyles = makeStyles((theme) => ({
     height: "250px",
     margin: "auto",
     [theme.breakpoints.down("sm")]: {
-      width: "300px",
-      height: "300px",
+      width: "200px",
+      height: "200px",
     },
   },
   icon: {
     color: theme.palette.secondary.main,
     fontSize: "4.5rem",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "2.5rem",
+    },
   },
 
   modeButton: {

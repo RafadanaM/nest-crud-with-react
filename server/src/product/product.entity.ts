@@ -40,7 +40,9 @@ export class ProductEntity {
 
   @Column('decimal', { default: 0.0 }) height: number;
 
-  @ManyToOne((type) => UserEntity, (creator) => creator.products)
+  @ManyToOne((type) => UserEntity, (creator) => creator.products, {
+    eager: true,
+  })
   creator: UserEntity;
 
   @OneToMany((type) => CommentEntity, (comment) => comment.product, {

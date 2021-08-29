@@ -1,8 +1,12 @@
 import {
   Button,
   CircularProgress,
+  FormControl,
   Grid,
+  InputLabel,
   makeStyles,
+  MenuItem,
+  Select,
   Typography,
 } from "@material-ui/core";
 
@@ -30,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
 
   button: {
     margin: "5px",
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    },
   },
 
   text: {
@@ -39,6 +46,14 @@ const useStyles = makeStyles((theme) => ({
   card: {
     display: "flex",
     margin: "10px",
+  },
+
+  formControl: {
+    minWidth: "100px",
+
+    [theme.breakpoints.up("sm")]: {
+      display: "none",
+    },
   },
 }));
 
@@ -66,6 +81,10 @@ const Order = () => {
     setFilter(status);
   };
 
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setFilter(event.target.value as Status);
+  };
+
   let { url } = useRouteMatch();
 
   const renderFilter = () => {
@@ -81,6 +100,37 @@ const Order = () => {
         {x}
       </Button>
     ));
+  };
+
+  const renderFilterMobile = () => {
+    return (
+      <FormControl
+        color="secondary"
+        variant="outlined"
+        className={css.formControl}
+        size="small"
+      >
+        {/* <InputLabel id="demo-simple-select-outlined-label">Age</InputLabel> */}
+        <Select
+          color="secondary"
+          labelId="demo-simple-select-outlined-label"
+          id="demo-simple-select-outlined"
+          value={filter}
+          onChange={handleChange}
+          // label="Age"
+        >
+          {status.map((x) => (
+            <MenuItem value={x} key={x}>
+              <em>{x}</em>
+            </MenuItem>
+          ))}
+
+          {/* <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem> */}
+        </Select>
+      </FormControl>
+    );
   };
 
   useEffect(() => {
@@ -107,6 +157,7 @@ const Order = () => {
           STATUS
         </Typography>
         {renderFilter()}
+        {renderFilterMobile()}
       </div>
       {orders.length === 0 && (
         <Typography variant="h1">Order is empty!</Typography>
