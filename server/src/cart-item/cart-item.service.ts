@@ -10,6 +10,7 @@ import { ProductService } from '../product/product.service';
 import { Repository } from 'typeorm';
 import { CartItemEntity } from './cart-item.entity';
 import { CartItemDTO } from 'src/cart/cart-item.dto';
+import { CartService } from 'src/cart/cart.service';
 
 @Injectable()
 export class CartItemService {
@@ -17,18 +18,23 @@ export class CartItemService {
     @InjectRepository(CartItemEntity)
     private cartItemRepository: Repository<CartItemEntity>,
     private readonly productService: ProductService, //private readonly userService: UserService
+    private readonly cartService: CartService,
   ) {}
 
-  private isOwned(cartItem: CartItemEntity, userId: string) {
-    if (cartItem.cart.cart_user.id !== userId) {
+  private isOwned(cartItemId: string, userId: string) {
+    if (cartItemId !== userId) {
       throw new ForbiddenException();
     }
   }
 
-  async createCartItem(cart: CartEntity, data: CartItemDTO) {
+  async createCartItem(userId: string, data: CartItemDTO) {
+    const cart = await this.cartService.getOneCart(userId);
     const product = await this.productService.getOne(data.productId);
     const checkCartItem = await this.cartItemRepository.findOne({
-      where: { product: { id: product.id }, cart: { id: cart.id } },
+      where: {
+        product: { id: product.id },
+        cart: { cart_user: { id: userId } },
+      },
     });
     //create new cartItem if product is not in cart
     if (!checkCartItem) {
@@ -42,7 +48,6 @@ export class CartItemService {
       return cartItem;
     }
 
-    
     // else add quantity
     await this.cartItemRepository.update(
       { id: checkCartItem.id },
@@ -50,13 +55,15 @@ export class CartItemService {
     );
   }
 
-  async deleteCartItem(cartItemId: string) {
+  async deleteCartItem(userId: string, cartItemId: string) {
     const cartItem = await this.cartItemRepository.findOne({
       where: { id: cartItemId },
+      relations: ['cart'],
     });
     if (!cartItem) {
       throw new NotFoundException();
     }
+    this.isOwned(cartItem.cart.cart_user.id, userId);
     await this.cartItemRepository.delete({ id: cartItemId });
     return 'cartItem Deleted';
   }

@@ -23,7 +23,6 @@ export class CartEntity {
   cart_user: UserEntity;
 
   @OneToMany((type) => CartItemEntity, (cart_item) => cart_item.cart, {
-    eager: true,
     cascade: true,
   })
   cart_items: CartItemEntity[];

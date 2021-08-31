@@ -58,7 +58,6 @@ const StatusFilter = ({ onClick, currentFilter, onChange }: StatusFilterI) => {
           id="demo-simple-select-outlined"
           value={currentFilter}
           onChange={onChange}
-          // label="Age"
         >
           {status.map((x) => (
             <MenuItem value={x} key={x}>

@@ -50,14 +50,13 @@ export const EditTextField = ({ disabled, ...rest }: TextFieldProps) => {
   return (
     <TextField
       disabled={disabled}
-      {...rest}
-      fullWidth
       margin="normal"
       InputLabelProps={{
         shrink: true,
       }}
       className={css.field}
       classes={{ root: css.input }}
+      {...rest}
     />
   );
 };

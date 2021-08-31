@@ -13,8 +13,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   outlined: {
-    borderBottomColor: theme.palette.secondary.main,
     borderBottom: "1px solid",
+    borderBottomColor: theme.palette.secondary.main,
   },
 
   rounded: {
@@ -108,7 +108,6 @@ const ItemCard = ({ itemName, sellerName, quantity, price }: ItemCardProp) => {
               <Typography
                 variant="body2"
                 component="p"
-                color="textSecondary"
               >{`${quantity} x Rp.${price}`}</Typography>
             </Box>
             <Box className={css.total}>

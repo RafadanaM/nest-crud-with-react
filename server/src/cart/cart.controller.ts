@@ -24,7 +24,7 @@ export class CartController {
   constructor(private cartService: CartService) {}
 
   @Post()
-  createNewOrder() {
+  createNewCart() {
     return this.cartService.createCart('f86fed85-2cfd-46c8-a71b-87b2b0dd5cce');
   }
 
@@ -33,24 +33,5 @@ export class CartController {
   @Roles('Buyer', 'Seller')
   getOneCart(@User('userId') userId: string) {
     return this.cartService.getOneCart(userId);
-  }
-
-  @Post('/item')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('Buyer', 'Seller')
-  @UsePipes(ValidationPipe)
-  createNewCartItem(@User('userId') userId: string, @Body() data: CartItemDTO) {
-    return this.cartService.addItem(userId, data);
-  }
-
-  @Delete('/item/:id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('Buyer', 'Seller')
-  @UsePipes(ValidationPipe)
-  deleteCartItem(
-    @User('userId') userId: string,
-    @Param('id', ParseUUIDPipe) productId: string,
-  ) {
-    return this.cartService.deleteItem(productId, userId);
   }
 }

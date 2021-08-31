@@ -12,7 +12,8 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { months } from "../../enum/enum";
-import OrderItemCard from "../ItemCard/ItemCard";
+import ItemCard from "../ItemCard/ItemCard";
+import theme from "../../theme";
 
 const useStyles = makeStyles({
   root: {
@@ -23,22 +24,16 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
     alignItems: "center",
   },
-
   cardHeader2: {
     marginTop: "5px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
-
-  note: {
-    flexBasis: "55%",
-  },
-
   divider: {
-    margin: "7px 0px",
+    margin: "5px 0px",
+    backgroundColor: theme.palette.background.default,
   },
-
   total: {
     textAlign: "end",
     margin: "5px 0px",
@@ -70,30 +65,20 @@ const OrderCard = ({ order, url }: OrderCardProp) => {
     <Card className={css.root}>
       <CardContent>
         <Box className={css.cardHeader}>
-          <Typography color="textSecondary">
-            {`Order Date: ${showDate(order.created)}`}
-          </Typography>
-          <Typography color="textSecondary">{order.status}</Typography>
+          <Typography>{`Order Date: ${showDate(order.created)}`}</Typography>
+          <Typography>{order.status}</Typography>
         </Box>
         <Box className={css.cardHeader2}>
-          <Box className={css.note}>
-            <Typography color="textSecondary">
-              Note: <br />{" "}
-            </Typography>
-            <Typography variant="body2" component="p">
-              {order.note}
-            </Typography>
-          </Box>
-
+          <Typography>Items:</Typography>
           <Typography variant="h6" component="h3" className={css.total}>
             {`Total: Rp.${order.total}`}
           </Typography>
         </Box>
+
         <Divider className={css.divider} />
-        <Typography>Items:</Typography>
         {order.order_items.map((orderItem) => {
           return (
-            <OrderItemCard
+            <ItemCard
               key={orderItem.id}
               itemName={orderItem.name}
               price={orderItem.price}
@@ -103,6 +88,7 @@ const OrderCard = ({ order, url }: OrderCardProp) => {
           );
         })}
       </CardContent>
+      <Divider className={css.divider} />
       <CardActions>
         <Link to={`${url}/${order.id}`} className={css.link}>
           <Button size="small">Detail</Button>

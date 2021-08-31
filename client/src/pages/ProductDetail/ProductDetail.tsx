@@ -24,7 +24,7 @@ import theme from "../../theme";
 import { bookmarkProduct, getProduct } from "../../api/ProductAPI";
 import { getUserWishlist } from "../../api/UserAPI";
 import { orderProduct } from "../../api/OrderAPI";
-import { addToCart } from "../../api/CartAPI";
+import { addToCart } from "../../api/CartItemAPI";
 import { EditTextField } from "../../components/EditTextField/EditTextField";
 const useStyles = makeStyles({
   baseContainer: {

@@ -15,18 +15,25 @@ import { CartItemService } from './cart-item.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/decorator/user.decorator';
 import { OrderItemDTO } from 'src/order-item/order-item.dto';
+import { CartItemDTO } from 'src/cart/cart-item.dto';
 @Controller('api/cart-item')
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
-  // @Delete(':id')
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)
-  // @Roles('Buyer', 'Seller')
-  // @UsePipes(ValidationPipe)
-  // createNewCartItem(
-  //   @User('userId') userId: string,
-  //   @Param('id', ParseUUIDPipe) productId: string,
-  // ) {
-  //   return this.cartItemService.deleteCartItem(productId, userId);
-  // }
+  @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('Buyer', 'Seller')
+  createNewCartItem(@User('userId') userId: string, @Body() data: CartItemDTO) {
+    return this.cartItemService.createCartItem(userId, data);
+  }
+
+  @Delete('/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('Buyer', 'Seller')
+  deleteCartItem(
+    @User('userId') userId: string,
+    @Param('id', ParseUUIDPipe) cartItemId: string,
+  ) {
+    return this.cartItemService.deleteCartItem(userId, cartItemId);
+  }
 }
