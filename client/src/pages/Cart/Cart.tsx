@@ -118,6 +118,7 @@ const Cart = () => {
               </Box>
               <EditTextField
                 className={css.textField}
+                disabled
                 required={false}
                 fullWidth={false}
                 id="stock"
@@ -136,9 +137,10 @@ const Cart = () => {
                       <IconButton
                         disabled={cartItem.quantity === 1}
                         color="secondary"
-                        // onClick={() =>
-                        //   quantity > 1 && setQuantity(quantity - 1)
-                        // }
+                        onClick={() =>
+                          cartItem.product.stock > 1 &&
+                          editItem(cartItem.id, cartItem.quantity - 1)
+                        }
                       >
                         <RemoveOutlined />
                       </IconButton>
@@ -150,6 +152,7 @@ const Cart = () => {
                         disabled={cartItem.quantity >= cartItem.product.stock}
                         color="secondary"
                         onClick={() =>
+                          cartItem.quantity < cartItem.product.stock &&
                           editItem(cartItem.id, cartItem.quantity + 1)
                         }
                       >
