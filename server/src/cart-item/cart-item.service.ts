@@ -4,8 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CartEntity } from '../cart/cart.entity';
-import { OrderItemDTO } from '../order-item/order-item.dto';
 import { ProductService } from '../product/product.service';
 import { Repository } from 'typeorm';
 import { CartItemEntity } from './cart-item.entity';
@@ -66,5 +64,28 @@ export class CartItemService {
     this.isOwned(cartItem.cart.cart_user.id, userId);
     await this.cartItemRepository.delete({ id: cartItemId });
     return 'cartItem Deleted';
+  }
+
+  async editCartItem(
+    userId: string,
+    cartItemId: string,
+    data: Partial<CartItemDTO>,
+  ) {
+    const cartItem = await this.cartItemRepository.findOne({
+      where: { id: cartItemId },
+      relations: ['cart'],
+    });
+    if (!cartItem) {
+      throw new NotFoundException();
+    }
+    this.isOwned(cartItem.cart.cart_user.id, userId);
+    await this.cartItemRepository.update(
+      { id: cartItemId },
+      { ...cartItem, quantity: data.quantity },
+    );
+    const newCartItem = await this.cartItemRepository.findOne({
+      where: { id: cartItemId },
+    });
+    return newCartItem;
   }
 }

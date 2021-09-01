@@ -13,16 +13,6 @@ const useStyle = makeStyles((theme) => ({
     marginTop: "0",
     backgroundColor: theme.palette.background.default,
   },
-  baseGrid: {
-    width: "100%",
-  },
-  productList: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  product: {
-    width: "100%",
-  },
 }));
 const Home = () => {
   const css = useStyle();

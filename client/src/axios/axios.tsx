@@ -1,8 +1,11 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 // import { toast } from "react-toastify";
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api",
-  headers: { "content-type": "application/json" },
+const axiosInstance: AxiosInstance = axios.create({
+  baseURL: "http://192.168.0.30:5000/api",
+  headers: {
+    "Content-type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
   responseType: "json",
   withCredentials: true,
 });
@@ -17,7 +20,7 @@ axiosInstance.interceptors.response.use(
     const res = error.response;
 
     if (!res?.status) {
-      alert("Server ERROR");
+      alert(error);
       return Promise.reject(error);
     }
 

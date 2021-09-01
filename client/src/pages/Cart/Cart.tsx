@@ -8,15 +8,12 @@ import {
 } from "@material-ui/core";
 import {
   AddOutlined,
-  Delete,
-  DeleteOutline,
-  DeleteOutlined,
   DeleteOutlineSharp,
   RemoveOutlined,
 } from "@material-ui/icons";
 import React, { useState, useEffect } from "react";
 import { getChart } from "../../api/CartAPI";
-import { deleteCartItem } from "../../api/CartItemAPI";
+import { deleteCartItem, editCartItem } from "../../api/CartItemAPI";
 import { EditTextField } from "../../components/EditTextField/EditTextField";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import { CartI } from "../../interfaces/interface";
@@ -66,6 +63,29 @@ const Cart = () => {
       });
   };
 
+  const editItem = (cartItemId: string, quantity: number) => {
+    editCartItem(cartItemId, quantity)
+      .then((data) => {
+        console.log(data);
+        setCart((prevState) => {
+          if (prevState === null) return null;
+          return {
+            ...prevState,
+            cart_items: [
+              ...prevState.cart_items.map((cartItem) =>
+                cartItem.id === cartItemId
+                  ? { ...cartItem, quantity: data.quantity }
+                  : cartItem
+              ),
+            ],
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     getChart()
       .then((data) => {
@@ -79,7 +99,7 @@ const Cart = () => {
     <div>
       {cart.cart_items.map((cartItem) => {
         return (
-          <Box className={css.card}>
+          <Box className={css.card} key={cartItem.id}>
             <ItemCard
               key={cartItem.id}
               sellerName={cartItem.product.creator.username}
@@ -129,9 +149,9 @@ const Cart = () => {
                       <IconButton
                         disabled={cartItem.quantity >= cartItem.product.stock}
                         color="secondary"
-                        // onClick={() =>
-                        //   quantity < 98 && setQuantity(quantity + 1)
-                        // }
+                        onClick={() =>
+                          editItem(cartItem.id, cartItem.quantity + 1)
+                        }
                       >
                         <AddOutlined />
                       </IconButton>

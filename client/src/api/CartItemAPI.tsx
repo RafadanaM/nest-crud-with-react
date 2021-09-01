@@ -15,3 +15,14 @@ export async function deleteCartItem(cartItemId: string): Promise<any> {
   const response = await axiosInstance.delete(`cart-item/${cartItemId}`);
   return response.data;
 }
+
+export async function editCartItem(
+  cartItemId: string,
+  quantity: number
+): Promise<any> {
+  const response = await axiosInstance.put(`cart-item/${cartItemId}`, {
+    quantity: quantity,
+  });
+
+  return response.data;
+}

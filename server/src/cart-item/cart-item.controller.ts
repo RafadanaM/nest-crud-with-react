@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -35,5 +36,16 @@ export class CartItemController {
     @Param('id', ParseUUIDPipe) cartItemId: string,
   ) {
     return this.cartItemService.deleteCartItem(userId, cartItemId);
+  }
+
+  @Put('/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('Buyer', 'Seller')
+  editCartItem(
+    @User('userId') userId: string,
+    @Param('id', ParseUUIDPipe) cartItemId: string,
+    @Body() data: Partial<CartItemDTO>,
+  ) {
+    return this.cartItemService.editCartItem(userId, cartItemId, data);
   }
 }
